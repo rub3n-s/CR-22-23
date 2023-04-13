@@ -1,6 +1,8 @@
 function train_function(op)
 
-fprintf('A iniciar o treino para o digito [%s]')
+fprintf('\n***************************************\n')
+fprintf(' A iniciar o treino para o digito [%s]\n',op)
+fprintf('***************************************\n\n')
 
 %% Definir Constantes
 % Resolucao das imagens
@@ -62,7 +64,7 @@ end
 
 %% Apresentar a Media
 fprintf('\n------ Apos 10 iteracoes ------\n')
-fprintf('Media de acertos = %.2f\n',somaTreinos/10);
+fprintf('Media de Precisao = %.2f\n',somaTreinos/10);
 
 %% Apresentar o plotconflusion
 plotconfusion(numTarget,out)
