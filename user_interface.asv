@@ -13,7 +13,7 @@ close all;
 %% Selecionar digito a ser treinado
 while 1
     fprintf('\nSelecione qual digito pretende treinar ("exit" para sair): \n')
-    fprintf('Opcoes = {0-9  +  -  /  *}\n')
+    fprintf('Opcoes = { 0-9  +  -  /  *\n')
     op = input('Digito: ','s');
     
     switch(op)

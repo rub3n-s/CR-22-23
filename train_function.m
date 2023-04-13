@@ -6,38 +6,55 @@ fprintf('***************************************\n\n')
 
 %% Definir Constantes
 % Resolucao das imagens
-% Tamanho das imagens 150x150
+% Tamanho padrao das imagens 150x150
 % Minimo 25x25
 IMG_RES = [25 25];
 
+% alinea a)
+% Caminho para a pasta
+%FOLDER_PATH = sprintf('NN_datasets/start/%s/',op);
+
 % Numero de ficheiros de imagem por pasta
-NUM_FILES = 5;
+%NUM_FILES = 5;
+
+% alinea b)
+% Caminho para a pasta
+FOLDER_PATH = sprintf('NN_datasets/train/%s/',op);
+
+% Numero de ficheiros de imagem por pasta
+NUM_FILES = 50;
 
 %% Ler, redimensionar e preparar os targets
 numBW = zeros(IMG_RES(1) * IMG_RES(2), NUM_FILES);
 
 % Ler os 5 elementos dentro da pasta
 for i=1:NUM_FILES
-    img = imread(sprintf('NN_datasets//start//%s//%d.png',op,i));
+    img = imread(strcat(FOLDER_PATH,sprintf('%d.png',i)));
     img = imresize(img,IMG_RES);
     binarizedImg = imbinarize(img);
     numBW(:, i) = reshape(binarizedImg, 1, []);
 end
 
 %% Target
-numTarget = [eye(5)];
+numTarget = [eye(NUM_FILES)];
 
 %% Treinar rede
+% alinea a) Testar apenas com 10 camadas escondidas
 net = feedforwardnet(10);
 
+% alinea b) Testar com varios neuronios e camadas escondidas
+%net = feedforwardnet([5 10 5]);
+
 %% Configurar a Rede
-%net.trainFcn = 'trainlm';
-%net.layers{1}.transferFcn = 'tansig';
-%net.layers{2}.transferFcn = 'purelin';
-%net.divideFcn = 'dividerand';
-%net.divideParam.trainRatio = 1;
-%net.divideParam.valRatio = 0;
-%net.divideParam.testRatio = 0;
+% alinea b) Testar varios parametros
+net.trainFcn = 'trainlm';
+net.layers{1}.transferFcn = 'tansig';
+net.layers{2}.transferFcn = 'purelin';
+net.divideFcn = 'dividerand';
+net.trainParam.epochs = 100;
+net.divideParam.trainRatio = 0.7;
+net.divideParam.valRatio = 0.15;
+net.divideParam.testRatio = 0.15;
 
 %% Realizar 10 iteracoes de treino e calcular media
 somaTreinos = 0;
