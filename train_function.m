@@ -12,17 +12,17 @@ IMG_RES = [25 25];
 
 % alinea a)
 % Caminho para a pasta
-%FOLDER_PATH = sprintf('NN_datasets/start/%s/',op);
+FOLDER_PATH = sprintf('NN_datasets/start/%s/',op);
 
 % Numero de ficheiros de imagem por pasta
-%NUM_FILES = 5;
+NUM_FILES = 5;
 
 % alinea b)
 % Caminho para a pasta
-FOLDER_PATH = sprintf('NN_datasets/train/%s/',op);
+%FOLDER_PATH = sprintf('NN_datasets/train/%s/',op);
 
 % Numero de ficheiros de imagem por pasta
-NUM_FILES = 50;
+%NUM_FILES = 50;
 
 %% Ler, redimensionar e preparar os targets
 numBW = zeros(IMG_RES(1) * IMG_RES(2), NUM_FILES);
