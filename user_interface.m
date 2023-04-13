@@ -18,7 +18,7 @@ while 1
     
     switch(op)
         % Opcao caso o utilizador deseje sair do ciclo
-        case 'exit'
+        case 'exit' 
             break
         % Caso seja uma opcao valida chama a funcao de treino
         case {'0','1','2','3','4','5','6','7','8','9'}
