@@ -16,14 +16,11 @@ NUM_FILES = 50;
 NUM_DIGIT_FOLDERS = 10;
 NUM_OPERATOR_FOLDERS = 4;
 
-% Gerar uma matriz
-binaryMatrixDigits = zeros(IMG_RES(1) * IMG_RES(2), NUM_FILES);
-targetMatrixDigits = [];
-
-binaryMatrixOperators = zeros(IMG_RES(1) * IMG_RES(2), NUM_FILES);
-targetMatrixOperators = [];
-
 %% [Digitos] 
+% Gerar uma matriz
+binaryMatrix = zeros(IMG_RES(1) * IMG_RES(2), NUM_FILES);
+targetMatrix = [];
+
 % ======== Ler, redimensionar e preparar os targets ========
 count = 1;
 for i=1:NUM_DIGIT_FOLDERS
@@ -36,7 +33,7 @@ for i=1:NUM_DIGIT_FOLDERS
         img = im2gray(img);
         img = imresize(img, IMG_RES);
         binarizedImg = imbinarize(img);
-        binaryMatrixDigits(:, count) = reshape(binarizedImg, 1, []);
+        binaryMatrix(:, count) = reshape(binarizedImg, 1, []);
         count=count+1;
     end
 end
@@ -54,68 +51,90 @@ vec9 = repelem(9, NUM_FILES);
 vec10 = repelem(10, NUM_FILES);
 
 % Preencher a matriz a partir dos vetores
-targetMatrixDigits = [vec1, vec2, vec3, vec4, vec5, vec6, vec7, ...
+targetMatrix = [vec1, vec2, vec3, vec4, vec5, vec6, vec7, ...
                 vec8, vec9, vec10];
 
-targetDigits = onehotencode(targetMatrixDigits,1,'ClassNames',1:10);
-inDigits = binaryMatrixDigits;
+target = onehotencode(targetMatrix,1,'ClassNames',1:10);
+in = binaryMatrix;
 
 % ======== Treinar rede ========
 % Testar com x neuronios e y camadas escondidas
-netDigits = feedforwardnet([5 5]);
+net = feedforwardnet([5 5]);
 
 % ======== Configurar a Rede ========
 % Função de Ativação
-netDigits.layers{1}.transferFcn = 'tansig';
-netDigits.layers{2}.transferFcn = 'purelin';
-netDigits.layers{3}.transferFcn = 'purelin';
+net.layers{1}.transferFcn = 'tansig';
+net.layers{2}.transferFcn = 'purelin';
+net.layers{3}.transferFcn = 'purelin';
 
 % Numero de Epocas
-netDigits.trainParam.epochs = 100;
+net.trainParam.epochs = 100;
 
 % Funcao de Treino
-netDigits.trainFcn = 'trainlm';
+net.trainFcn = 'trainlm';
 
 % Divisao de Treino
-netDigits.divideFcn = 'dividerand';
-netDigits.divideParam.trainRatio = 0.70;
-netDigits.divideParam.valRatio = 0.15;
-netDigits.divideParam.testRatio = 0.15;
+net.divideFcn = 'dividerand';
+net.divideParam.trainRatio = 0.70;
+net.divideParam.valRatio = 0.15;
+net.divideParam.testRatio = 0.15;
 
 % ======== Treinar, Simular e Apresentar Resultados ========
 % Realizar 10 iteracoes de treino e calcular media
-sumTrainsDigits = 0;
+sumDigitsTest = 0;
+sumDigitsGlobal = 0;
 for k=1:10
+    fprintf('\n----- [Digitos] Iteracao %d -----\n',k);
     % Treinar 
-    [netDigits,trDigits] = train(netDigits, inDigits, targetDigits);    
+    [net,tr] = train(net, in, target);    
 
     % Simular
-    outDigits = sim(netDigits, inDigits);
+    out = sim(net, in);
     
     r = 0;
-    for i=1:size(outDigits,2)
-        [a, b] = max(outDigits(:,i));
-        [c, d] = max(targetDigits(:,i));
+    for i=1:size(out,2)
+        [a, b] = max(out(:,i));
+        [c, d] = max(target(:,i));
         if b == d
           r = r+1;
         end
     end
     
-    accuracy = r/size(outDigits,2) * 100;
-    sumTrainsDigits = sumTrainsDigits + accuracy;
-    fprintf('\nPrecisao do Treino [%d] = %.2f\n', k, accuracy)
+    accuracy = r/size(out,2)*100;
+    sumDigitsGlobal= sumDigitsGlobal + accuracy;
+    fprintf('\tPrecisao Global = %.2f\n', accuracy);
+
+    % SIMULAR A REDE APENAS NO CONJUNTO DE TESTE
+    TInput = in(:, tr.testInd);
+    TTargets = target(:, tr.testInd);
+    
+    out = sim(net, TInput);
+    
+    % erro = perform(net, out,TTargets);
+    % fprintf('Erro na classificação do conjunto de teste %f\n', erro)
+    
+    %Calcula e mostra a percentagem de classificacoes corretas no conjunto de teste
+    r=0;
+    for i=1:size(tr.testInd,2)        % Para cada classificacao  
+      [a b] = max(out(:,i));          % b guarda a linha onde encontrou valor mais alto da saida obtida
+      [c d] = max(TTargets(:,i));     % d guarda a linha onde encontrou valor mais alto da saida desejada
+      if b == d                       % se estao na mesma linha, a classificacao foi correta (incrementa 1)
+          r = r+1;
+      end
+    end
+
+    accuracy = r/size(tr.testInd,2)*100;
+    sumDigitsTest= sumDigitsTest + accuracy;
+    fprintf('\tPrecisao Teste = %.2f\n',accuracy);
 
     %plotconfusion(target,out) % Matriz de confusao
-
-    % Desempenho
-    %disp(tr.performFcn);
-    disp('========== Digits Performance ==========')
-    disp(['Train Performance: ' num2str(trDigits.best_perf)])
-    disp(['Validation Performance: ' num2str(trDigits.best_vperf)]);
-    disp(['Test Performance: ' num2str(trDigits.best_tperf)]);
 end
 
 %% [Operadores] 
+% Gerar uma matriz
+binaryMatrix = zeros(IMG_RES(1) * IMG_RES(2), NUM_FILES);
+targetMatrix = [];
+
 % ======== Ler, redimensionar e preparar os targets ========
 count = 1;
 for i=1:NUM_OPERATOR_FOLDERS
@@ -137,7 +156,7 @@ for i=1:NUM_OPERATOR_FOLDERS
         img = im2gray(img);
         img = imresize(img, IMG_RES);
         binarizedImg = imbinarize(img);
-        binaryMatrixOperators(:, count) = reshape(binarizedImg, 1, []);
+        binaryMatrix(:, count) = reshape(binarizedImg, 1, []);
         count=count+1;
     end
 end
@@ -149,10 +168,10 @@ vec3 = repelem(3, NUM_FILES);
 vec4 = repelem(4, NUM_FILES);
 
 % Preencher a matriz a partir dos vetores
-targetMatrixOperators = [vec1, vec2, vec3, vec4];
+targetMatrix = [vec1, vec2, vec3, vec4];
 
-targetOperators = onehotencode(targetMatrixOperators,1,'ClassNames',1:4);
-inOperators = binaryMatrixOperators;
+target = onehotencode(targetMatrix,1,'ClassNames',1:4);
+in = binaryMatrix;
 
 % ======== Treinar rede ========
 % Testar com x neuronios e y camadas escondidas
@@ -178,43 +197,63 @@ netOperators.divideParam.testRatio = 0.15;
 
 % ======== Treinar, Simular e Apresentar Resultados ========
 % Realizar 10 iteracoes de treino e calcular media
-sumTrainsOperators = 0;
+sumOperatorsTest = 0;
+sumOperatorsGlobal = 0;
 for k=1:10
+    fprintf('\n----- [Operadores] Iteracao %d -----\n',k);
     % Treinar 
-    [netOperators,trOperators] = train(netOperators, inOperators, targetOperators);    
+    [netOperators,tr] = train(netOperators, in, target);    
 
     % Simular
-    outOperators = sim(netOperators, inOperators);
+    out = sim(netOperators, in);
     
     r = 0;
-    for i=1:size(outOperators,2)
-        [a, b] = max(outOperators(:,i));
-        [c, d] = max(targetOperators(:,i));
+    for i=1:size(out,2)
+        [a, b] = max(out(:,i));
+        [c, d] = max(target(:,i));
         if b == d
           r = r+1;
         end
     end
     
-    accuracy = r/size(outOperators,2) * 100;
-    sumTrainsOperators = sumTrainsOperators + accuracy;
-    fprintf('\nPrecisao do Treino [%d] = %.2f\n', k, accuracy)
+    accuracy = r/size(out,2)*100;
+    sumOperatorsGlobal= sumOperatorsGlobal + accuracy;
+    fprintf('\tPrecisao Global = %.2f\n', accuracy)
+
+    % SIMULAR A REDE APENAS NO CONJUNTO DE TESTE
+    TInput = in(:, tr.testInd);
+    TTargets = target(:, tr.testInd);
+    
+    out = sim(net, TInput);
+    
+    % erro = perform(net, out,TTargets);
+    % fprintf('Erro na classificação do conjunto de teste %f\n', erro)
+    
+    %Calcula e mostra a percentagem de classificacoes corretas no conjunto de teste
+    r=0;
+    for i=1:size(tr.testInd,2)        % Para cada classificacao  
+      [a b] = max(out(:,i));          % b guarda a linha onde encontrou valor mais alto da saida obtida
+      [c d] = max(TTargets(:,i));     % d guarda a linha onde encontrou valor mais alto da saida desejada
+      if b == d                       % se estao na mesma linha, a classificacao foi correta (incrementa 1)
+          r = r+1;
+      end
+    end
+
+    accuracy = r/size(tr.testInd,2)*100;
+    sumOperatorsTest= sumOperatorsTest + accuracy;
+    fprintf('\tPrecisao Teste = %.2f\n', accuracy); 
 
     %plotconfusion(target,out) % Matriz de confusao
-
-    % Desempenho
-    %disp(tr.performFcn);
-    disp('========== Operators Performance ==========')
-    disp(['Train Performance: ' num2str(trOperators.best_perf)])
-    disp(['Validation Performance: ' num2str(trOperators.best_vperf)]);
-    disp(['Test Performance: ' num2str(trOperators.best_tperf)]);
 end
 
 %% [Digitos] Apresentar a Media
-fprintf('\n ------ [Digitos] Apos 10 iteracoes ------\n')
-fprintf('Media de Precisao = %.2f\n', sumTrainsDigits/10);
+fprintf('\n ------ [Digitos] Apos 10 iteracoes ------\n');
+fprintf('\tMedia de Precisao Teste = %.2f\n', sumDigitsTest/10);
+fprintf('\tMedia de Precisao Global = %.2f\n', sumDigitsGlobal/10);
 
 %% [Operadores] Apresentar a Media
-fprintf('\n ------ [Operadores] Apos 10 iteracoes ------\n')
-fprintf('Media de Precisao = %.2f\n', sumTrainsOperators/10);
+fprintf('\n ------ [Operadores] Apos 10 iteracoes ------\n');
+fprintf('\tMedia de Precisao Teste = %.2f\n', sumOperatorsTest/10);
+fprintf('\tMedia de Precisao Global = %.2f\n', sumOperatorsGlobal/10);
 
 end

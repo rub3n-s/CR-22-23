@@ -89,7 +89,8 @@ net.divideParam.valRatio = 0.15;
 net.divideParam.testRatio = 0.15;
 
 %% Realizar 10 iteracoes de treino e calcular media
-sumTrains = 0;
+sumGlobal = 0;
+sumTest = 0;
 
 for k=1:10
     %% Treinar, Simular e Apresentar Resultados
@@ -108,21 +109,38 @@ for k=1:10
         end
     end
     
-    accuracy = r/size(out,2) * 100;
-    sumTrains = sumTrains + accuracy;
-    fprintf('\nPrecisao do Treino [%d] = %.2f\n', k, accuracy)
+    accuracy = r/size(out,2)*100;
+    sumGlobal= sumGlobal + accuracy;
+    fprintf('\nPrecisao Global [iteracao:%d] = %.2f\n', k, accuracy)
 
     %plotconfusion(target,out) % Matriz de confusao
 
-    %% Desempenho
-    %disp(tr.performFcn);
-    disp(['Train Performance: ' num2str(tr.best_perf)])
-    disp(['Validation Performance: ' num2str(tr.best_vperf)]);
-    disp(['Test Performance: ' num2str(tr.best_tperf)]);
+    % SIMULAR A REDE APENAS NO CONJUNTO DE TESTE
+    TInput = in(:, tr.testInd);
+    TTargets = target(:, tr.testInd);
+    
+    out = sim(net, TInput);
+    
+    % erro = perform(net, out,TTargets);
+    % fprintf('Erro na classificação do conjunto de teste %f\n', erro)
+    
+    %Calcula e mostra a percentagem de classificacoes corretas no conjunto de teste
+    r=0;
+    for i=1:size(tr.testInd,2)        % Para cada classificacao  
+      [a b] = max(out(:,i));          % b guarda a linha onde encontrou valor mais alto da saida obtida
+      [c d] = max(TTargets(:,i));     % d guarda a linha onde encontrou valor mais alto da saida desejada
+      if b == d                       % se estao na mesma linha, a classificacao foi correta (incrementa 1)
+          r = r+1;
+      end
+    end
+
+    accuracy = r/size(tr.testInd,2)*100;
+    sumTest= sumTest + accuracy;
+    fprintf('Precisao Teste [iteracao:%d] = %.2f\n', k, accuracy);    
 end
 
 %% Apresentar a Media
-fprintf('\n------ Apos 10 iteracoes ------\n')
-fprintf('Media de Precisao = %.2f\n', sumTrains/10);
-
+fprintf('\nApos 10 Iterações:\n')
+fprintf('\tMedia Precisao Total = %f\n', sumGlobal/10);
+fprintf('\tMedia Precisao Teste = %f\n', sumTest/10);
 end
