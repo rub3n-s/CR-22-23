@@ -1,4 +1,4 @@
-function train_function_a()
+function train_function_c()
 %% Definir Constantes
 % Resolucao das imagens
 % Tamanho padrao das imagens 150x150
@@ -6,7 +6,7 @@ function train_function_a()
 IMG_RES = [25 25];
 
 % Numero de ficheiros de imagem por pasta
-NUM_FILES = 5;
+NUM_FILES = 3;
 
 % Numero de pastas
 NUM_FOLDERS = 14;
@@ -21,18 +21,18 @@ for i=1:NUM_FOLDERS
     % Definir o caminho para a pasta
     switch(i)
         case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            FOLDER_PATH = sprintf('NN_datasets/start/%d/',i);
+            FOLDER_PATH = sprintf('NN_datasets/custom/%d/',i);
         case 10 % add
-            FOLDER_PATH = 'NN_datasets/start/add/';
+            FOLDER_PATH = 'NN_datasets/custom/add/';
         case 11 % div
-            FOLDER_PATH = 'NN_datasets/start/div/';
+            FOLDER_PATH = 'NN_datasets/custom/div/';
         case 12 % mul
-            FOLDER_PATH = 'NN_datasets/start/mul/';
+            FOLDER_PATH = 'NN_datasets/custom/mul/';
         case 13 % sub
-            FOLDER_PATH = 'NN_datasets/start/sub/';
+            FOLDER_PATH = 'NN_datasets/custom/sub/';
     end
 
-    % Percorrer os 5 ficheiros dentro da pasta i
+    % Percorrer os 3 ficheiros dentro da pasta i
     for j=1:NUM_FILES
         img = imread(strcat(FOLDER_PATH,sprintf('%d.png',j)));
         img = im2gray(img);
