@@ -74,7 +74,7 @@ net = feedforwardnet(10);
 % Função de Ativação
 net.layers{1}.transferFcn = 'tansig';
 net.layers{2}.transferFcn = 'purelin';
-net.layers{3}.transferFcn = 'purelin';
+%net.layers{3}.transferFcn = 'purelin';
 
 % Numero de Epocas
 net.trainParam.epochs = 100;
@@ -137,6 +137,9 @@ for k=1:10
     accuracy = r/size(tr.testInd,2)*100;
     sumTest= sumTest + accuracy;
     fprintf('Precisao Teste [iteracao:%d] = %.2f\n', k, accuracy);    
+
+    %% Guardar a rede
+    save('net.mat', 'net');
 end
 
 %% Apresentar a Media

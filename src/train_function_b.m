@@ -97,15 +97,16 @@ net.trainFcn = 'trainlm';
 
 % Divisao de Treino
 net.divideFcn = 'dividerand';
-net.divideParam.trainRatio = 0.33;
-net.divideParam.valRatio = 0.33;
-net.divideParam.testRatio = 0.33;
+net.divideParam.trainRatio = 0.7;
+net.divideParam.valRatio = 0.15;
+net.divideParam.testRatio = 0.15;
 
 %% Realizar 10 iteracoes de treino e calcular media
 sumGlobal = 0;
 sumTest = 0;
 
 for k=1:10
+    fprintf('\n---------- Iteracao [%d] ----------\n',k);    
     %% Treinar, Simular e Apresentar Resultados
     % Treinar 
     [net,tr] = train(net, in, target);    
@@ -124,7 +125,7 @@ for k=1:10
     
     accuracy = r/size(out,2)*100;
     sumGlobal= sumGlobal + accuracy;
-    fprintf('\nPrecisao Global [iteracao:%d] = %.2f\n', k, accuracy)
+    fprintf('\tPrecisao Global = %.2f\n', k, accuracy)
 
     %plotconfusion(target,out) % Matriz de confusao
 
@@ -149,11 +150,20 @@ for k=1:10
 
     accuracy = r/size(tr.testInd,2)*100;
     sumTest= sumTest + accuracy;
-    fprintf('Precisao Teste [iteracao:%d] = %.2f\n', k, accuracy);    
+    fprintf('\tPrecisao Teste = %.2f\n', k, accuracy);    
+
+    %% Desempenho
+    %disp(tr.performFcn);
+    disp(['\tTrain Performance: ' num2str(tr.best_perf)])
+    disp(['\tValidation Performance: ' num2str(tr.best_vperf)]);
+    disp(['\tTest Performance: ' num2str(tr.best_tperf)]);
+
+    %% Guardar a rede
+    save('net.mat', 'net');
 end
 
 %% Apresentar a Media
-fprintf('\nApos 10 Iterações:\n')
+fprintf('\n---------- Apos 10 Iterações ----------\n')
 fprintf('\tMedia Precisao Total = %.2f\n', sumGlobal/10);
 fprintf('\tMedia Precisao Teste = %.2f\n', sumTest/10);
 end

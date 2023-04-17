@@ -59,25 +59,25 @@ in = binaryMatrix;
 
 % ======== Treinar rede ========
 % Testar com x neuronios e y camadas escondidas
-net = feedforwardnet([5 5]);
+netDigits = feedforwardnet([5 5]);
 
 % ======== Configurar a Rede ========
 % Função de Ativação
-net.layers{1}.transferFcn = 'tansig';
-net.layers{2}.transferFcn = 'purelin';
-net.layers{3}.transferFcn = 'purelin';
+netDigits.layers{1}.transferFcn = 'tansig';
+netDigits.layers{2}.transferFcn = 'purelin';
+netDigits.layers{3}.transferFcn = 'purelin';
 
 % Numero de Epocas
-net.trainParam.epochs = 100;
+netDigits.trainParam.epochs = 100;
 
 % Funcao de Treino
-net.trainFcn = 'trainlm';
+netDigits.trainFcn = 'trainlm';
 
 % Divisao de Treino
-net.divideFcn = 'dividerand';
-net.divideParam.trainRatio = 0.70;
-net.divideParam.valRatio = 0.15;
-net.divideParam.testRatio = 0.15;
+netDigits.divideFcn = 'dividerand';
+netDigits.divideParam.trainRatio = 0.70;
+netDigits.divideParam.valRatio = 0.15;
+netDigits.divideParam.testRatio = 0.15;
 
 % ======== Treinar, Simular e Apresentar Resultados ========
 % Realizar 10 iteracoes de treino e calcular media
@@ -86,10 +86,10 @@ sumDigitsGlobal = 0;
 for k=1:10
     fprintf('\n----- [Digitos] Iteracao %d -----\n',k);
     % Treinar 
-    [net,tr] = train(net, in, target);    
+    [netDigits,tr] = train(netDigits, in, target);    
 
     % Simular
-    out = sim(net, in);
+    out = sim(netDigits, in);
     
     r = 0;
     for i=1:size(out,2)
@@ -108,9 +108,9 @@ for k=1:10
     TInput = in(:, tr.testInd);
     TTargets = target(:, tr.testInd);
     
-    out = sim(net, TInput);
+    out = sim(netDigits, TInput);
     
-    % erro = perform(net, out,TTargets);
+    % erro = perform(netDigits, out,TTargets);
     % fprintf('Erro na classificação do conjunto de teste %f\n', erro)
     
     %Calcula e mostra a percentagem de classificacoes corretas no conjunto de teste
@@ -128,6 +128,9 @@ for k=1:10
     fprintf('\tPrecisao Teste = %.2f\n',accuracy);
 
     %plotconfusion(target,out) % Matriz de confusao
+
+    %% Guardar a rede
+    save('netDigits.mat', 'netDigits');
 end
 
 %% [Operadores] 
@@ -224,9 +227,9 @@ for k=1:10
     TInput = in(:, tr.testInd);
     TTargets = target(:, tr.testInd);
     
-    out = sim(net, TInput);
+    out = sim(netDigits, TInput);
     
-    % erro = perform(net, out,TTargets);
+    % erro = perform(netDigits, out,TTargets);
     % fprintf('Erro na classificação do conjunto de teste %f\n', erro)
     
     %Calcula e mostra a percentagem de classificacoes corretas no conjunto de teste
@@ -244,6 +247,9 @@ for k=1:10
     fprintf('\tPrecisao Teste = %.2f\n', accuracy); 
 
     %plotconfusion(target,out) % Matriz de confusao
+
+    %% Guardar a rede
+    save('netOperators.mat', 'netOperators');
 end
 
 %% [Digitos] Apresentar a Media

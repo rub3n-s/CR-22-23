@@ -74,6 +74,7 @@ net = feedforwardnet(10);
 somaTreinos = 0;
 
 for k=1:10
+    fprintf('\n---------- Iteracao [%d] ----------\n',k);
     %% Treinar, Simular e Apresentar Resultados
     % Treinar 
     [net,tr] = train(net, in, target);    
@@ -92,7 +93,7 @@ for k=1:10
     
     accuracy = r/size(out,2) * 100;
     somaTreinos = somaTreinos + accuracy;
-    fprintf('\nPrecisao do Treino [%d] = %.2f\n', k, accuracy)
+    fprintf('Precisao do Treino = %.2f\n', k, accuracy)
 
     %plotconfusion(numTarget,out) % Matriz de confusao
 
@@ -104,7 +105,7 @@ for k=1:10
 end
 
 %% Apresentar a Media
-fprintf('\n------ Apos 10 iteracoes ------\n')
+fprintf('\n---------- Apos 10 iteracoes ----------\n')
 fprintf('Media de Precisao = %.2f\n',somaTreinos/10);
 
 end
