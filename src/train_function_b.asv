@@ -17,11 +17,17 @@ targetMatrix = [];
 count = 1;
 
 %% Ler, redimensionar e preparar os targets
+fprintf('A ler imagens...\n');
 for i=1:NUM_FOLDERS
+    index = i-1;
+    if (index >= 0 && index < 10)
+        fprintf('../NN_datasets/train/%d/',ind);
+        FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i);
+    end
     % Definir o caminho para a pasta
-    switch(i)
-        case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i);
+    switch(i-1)
+        %case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+            %FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i);
         case 10 % add
             FOLDER_PATH = '../NN_datasets/train/add/';
         case 11 % div
@@ -105,8 +111,6 @@ net.divideParam.testRatio = 0.15;
 sumGlobal = 0;
 sumTest = 0;
 
-% Variaveis auxiliares para guardar cada treino
-netAux = null;
 netGlobal = 0;
 netTest = 0;
 
@@ -128,9 +132,9 @@ for k=1:10
         end
     end
     
-    accuracy = r/size(out,2)*100;
-    sumGlobal= sumGlobal + accuracy;
-    fprintf('\tPrecisao Global = %.2f\n', k, accuracy)
+    globalAccuracy = r/size(out,2)*100;
+    sumGlobal= sumGlobal + globalAccuracy;
+    fprintf('\tPrecisao Global = %.2f\n', globalAccuracy)
 
     %plotconfusion(target,out) % Matriz de confusao
 
@@ -153,21 +157,29 @@ for k=1:10
       end
     end
 
-    accuracy = r/size(tr.testInd,2)*100;
-    sumTest= sumTest + accuracy;
-    fprintf('\tPrecisao Teste = %.2f\n', k, accuracy);    
+    testAccuracy = r/size(tr.testInd,2)*100;
+    sumTest = sumTest + testAccuracy;
+    fprintf('\tPrecisao Teste = %.2f\n', testAccuracy);    
 
     %% Desempenho
     %disp(tr.performFcn);
-    disp(['\tTrain Performance: ' num2str(tr.best_perf)])
-    disp(['\tValidation Performance: ' num2str(tr.best_vperf)]);
-    disp(['\tTest Performance: ' num2str(tr.best_tperf)]);
+    disp(['Train Performance: ' num2str(tr.best_perf)])
+    disp(['Validation Performance: ' num2str(tr.best_vperf)]);
+    disp(['Test Performance: ' num2str(tr.best_tperf)]);
 
-    %% Guardar Val
-    %% Guardar a rede
-    str = strcat("..\\networks\\", 'net'); % substituir 'net' por uma variavel generica
-    save(str, 'net');
+    %% Guardar Valores da Net
+    % Guardar a primeira iteracao ou a net que tiver melhores valores de
+    % precisao
+    if (k == 1 || globalAccuracy > netGlobal && testAccuracy > netTest)
+        netGlobal = globalAccuracy;
+        netTest = testAccuracy;
+        netAux = net; 
+    end    
 end
+
+%% Guardar a rede
+str = strcat("..\\networks\\", 'net_b'); % substituir 'net' por uma variavel generica
+save(str, 'netAux');
 
 %% Apresentar a Media
 fprintf('\n---------- Apos 10 Iterações ----------\n')

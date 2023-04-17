@@ -17,11 +17,12 @@ targetMatrix = [];
 count = 1;
 
 %% Ler, redimensionar e preparar os targets
+fprintf('\nA ler imagens...\nPastas acessadas:\n');
 for i=1:NUM_FOLDERS
     % Definir o caminho para a pasta
-    switch(i)
+    switch(i-1)
         case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i);
+            FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i-1);
         case 10 % add
             FOLDER_PATH = '../NN_datasets/train/add/';
         case 11 % div
@@ -31,6 +32,9 @@ for i=1:NUM_FOLDERS
         case 13 % sub
             FOLDER_PATH = '../NN_datasets/train/sub/';
     end
+
+    % Mostrar as pastas acessadas
+    fprintf('%s\n', FOLDER_PATH);
 
     % Percorrer os ficheiros (50) dentro da pasta i
     for j=1:NUM_FILES
@@ -68,13 +72,13 @@ in = binaryMatrix;
 
 %% Treinar rede
 % Testar com x neuronios e y camadas escondidas
-net = feedforwardnet(10);
+net = feedforwardnet([5 5]);
 
 %% Configurar a Rede
 % Função de Ativação
 net.layers{1}.transferFcn = 'tansig';
-net.layers{2}.transferFcn = 'purelin';
-%net.layers{3}.transferFcn = 'purelin';
+net.layers{2}.transferFcn = 'tansig';
+net.layers{3}.transferFcn = 'purelin';
 
 % Funções de Ativacao:
 %   tasing
@@ -104,6 +108,7 @@ net.divideParam.testRatio = 0.15;
 %% Realizar 10 iteracoes de treino e calcular media
 sumGlobal = 0;
 sumTest = 0;
+sumPerformance = 0;
 
 netGlobal = 0;
 netTest = 0;
@@ -128,7 +133,7 @@ for k=1:10
     
     globalAccuracy = r/size(out,2)*100;
     sumGlobal= sumGlobal + globalAccuracy;
-    fprintf('\tPrecisao Global = %.2f\n', k, globalAccuracy)
+    fprintf('\tPrecisao Global = %.2f\n', globalAccuracy)
 
     %plotconfusion(target,out) % Matriz de confusao
 
@@ -153,13 +158,14 @@ for k=1:10
 
     testAccuracy = r/size(tr.testInd,2)*100;
     sumTest = sumTest + testAccuracy;
-    fprintf('\tPrecisao Teste = %.2f\n', k, testAccuracy);    
+    fprintf('\tPrecisao Teste = %.2f\n', testAccuracy);    
 
     %% Desempenho
     %disp(tr.performFcn);
-    disp(['\tTrain Performance: ' num2str(tr.best_perf)])
-    disp(['\tValidation Performance: ' num2str(tr.best_vperf)]);
-    disp(['\tTest Performance: ' num2str(tr.best_tperf)]);
+    disp(['Train Performance: ' num2str(tr.best_perf)])
+    disp(['Validation Performance: ' num2str(tr.best_vperf)]);
+    disp(['Test Performance: ' num2str(tr.best_tperf)]);
+    sumPerformance = sumPerformance + tr.best_perf;
 
     %% Guardar Valores da Net
     % Guardar a primeira iteracao ou a net que tiver melhores valores de
@@ -179,4 +185,5 @@ save(str, 'netAux');
 fprintf('\n---------- Apos 10 Iterações ----------\n')
 fprintf('\tMedia Precisao Total = %.2f\n', sumGlobal/10);
 fprintf('\tMedia Precisao Teste = %.2f\n', sumTest/10);
+fprintf('\tMedia Performance = %.2f\n', sumPerformance/10)
 end

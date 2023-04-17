@@ -22,10 +22,14 @@ binaryMatrix = zeros(IMG_RES(1) * IMG_RES(2), NUM_FILES);
 targetMatrix = [];
 
 % ======== Ler, redimensionar e preparar os targets ========
+fprintf('\n[Digitos] A ler imagens...\nPastas acessadas:\n');
 count = 1;
 for i=1:NUM_DIGIT_FOLDERS
     % Definir o caminho para a pasta
     FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i-1);    
+
+    % Mostrar as pastas acessadas
+    fprintf('%s\n', FOLDER_PATH);
 
     % Percorrer os ficheiros (50) dentro da pasta i
     for j=1:NUM_FILES
@@ -150,6 +154,7 @@ targetMatrix = [];
 
 % ======== Ler, redimensionar e preparar os targets ========
 count = 1;
+fprintf('\n[Operadores] A ler imagens...\nPastas acessadas:\n');
 for i=1:NUM_OPERATOR_FOLDERS
     % Definir o caminho para a pasta
     switch(i)
@@ -162,6 +167,9 @@ for i=1:NUM_OPERATOR_FOLDERS
         case 4 % sub
             FOLDER_PATH = '../NN_datasets/train/sub/';
     end
+
+    % Mostrar as pastas acessadas
+    fprintf('%s\n', FOLDER_PATH);
 
     % Percorrer os 50 ficheiros dentro da pasta i
     for j=1:NUM_FILES

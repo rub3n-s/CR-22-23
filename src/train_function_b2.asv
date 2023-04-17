@@ -22,10 +22,14 @@ binaryMatrix = zeros(IMG_RES(1) * IMG_RES(2), NUM_FILES);
 targetMatrix = [];
 
 % ======== Ler, redimensionar e preparar os targets ========
+fprintf('\n[Digitos]A ler imagens...\nPastas acessadas:\n');
 count = 1;
 for i=1:NUM_DIGIT_FOLDERS
     % Definir o caminho para a pasta
     FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i-1);    
+
+    % Mostrar as pastas acessadas
+    fprintf('%s\n', FOLDER_PATH);
 
     % Percorrer os ficheiros (50) dentro da pasta i
     for j=1:NUM_FILES
@@ -83,6 +87,10 @@ netDigits.divideParam.testRatio = 0.15;
 % Realizar 10 iteracoes de treino e calcular media
 sumDigitsTest = 0;
 sumDigitsGlobal = 0;
+
+netDigitsGlobal = 0;
+netDigitsTest = 0;
+
 for k=1:10
     fprintf('\n----- [Digitos] Iteracao %d -----\n',k);
     % Treinar 
@@ -101,7 +109,6 @@ for k=1:10
     end
     
     globalAccuracy = r/size(out,2)*100;
-    netGlobal = globalAccuracy;
     sumDigitsGlobal= sumDigitsGlobal + globalAccuracy;
     fprintf('\tPrecisao Global = %.2f\n', globalAccuracy);
 
@@ -125,14 +132,13 @@ for k=1:10
     end
 
     testAccuracy = r/size(tr.testInd,2)*100;
-    netTest = testAccuracy;
     sumDigitsTest= sumDigitsTest + testAccuracy;
     fprintf('\tPrecisao Teste = %.2f\n',testAccuracy);
 
     %% Guardar Valores da Net
     % Guardar a primeira iteracao ou a net que tiver melhores valores de
     % precisao
-    if (k == 1 || globalAccuracy > netGlobal && testAccuracy > netTest)
+    if (k == 1 || globalAccuracy > netDigitsGlobal && testAccuracy > netDigitsTest)
         netDigitsGlobal = globalAccuracy;
         netDigitsTest = testAccuracy;
         netDigitsAux = net; 
@@ -210,6 +216,10 @@ netOperators.divideParam.testRatio = 0.15;
 % Realizar 10 iteracoes de treino e calcular media
 sumOperatorsTest = 0;
 sumOperatorsGlobal = 0;
+
+netOperatorsGlobal = 0;
+netOperatorsTest = 0;
+
 for k=1:10
     fprintf('\n----- [Operadores] Iteracao %d -----\n',k);
     % Treinar 
@@ -228,7 +238,6 @@ for k=1:10
     end
     
     globalAccuracy = r/size(out,2)*100;
-    netOperatorsGlobal = globalAccuracy;
     sumOperatorsGlobal= sumOperatorsGlobal + globalAccuracy;
     fprintf('\tPrecisao Global = %.2f\n', globalAccuracy)
 
@@ -252,7 +261,6 @@ for k=1:10
     end
 
     testAccuracy = r/size(tr.testInd,2)*100;
-    netOperatorsTest = testAccuracy;
     sumOperatorsTest= sumOperatorsTest + testAccuracy;
     fprintf('\tPrecisao Teste = %.2f\n', testAccuracy); 
 
@@ -260,8 +268,8 @@ for k=1:10
     % Guardar a primeira iteracao ou a net que tiver melhores valores de
     % precisao
     if (k == 1 || globalAccuracy > netOperatorsGlobal && testAccuracy > netOperatorsTest)
-        netOperatorsGlobal = globalOperatorsAccuracy;
-        netOperatorsTest = testOperatorsAccuracy;
+        netOperatorsGlobal = globalAccuracy;
+        netOperatorsTest = testAccuracy;
         netOperatorsAux = net; 
     end    
 
@@ -275,8 +283,8 @@ fprintf('\tMedia de Precisao Teste = %.2f\n', sumDigitsTest/10);
 fprintf('\tMedia de Precisao Global = %.2f\n', sumDigitsGlobal/10);
 
 % Guardar a rede
-str = strcat("..\\networks\\", 'netDigitsAux'); % substituir 'netOperators' por uma variavel generica
-save(str, 'netDigits');
+str = strcat("..\\networks\\", 'netDigits_b2'); % substituir 'netOperators' por uma variavel generica
+save(str, 'netDigitsAux');
 
 %% [Operadores] Apresentar a Media
 fprintf('\n ------ [Operadores] Apos 10 iteracoes ------\n');
@@ -284,7 +292,7 @@ fprintf('\tMedia de Precisao Teste = %.2f\n', sumOperatorsTest/10);
 fprintf('\tMedia de Precisao Global = %.2f\n', sumOperatorsGlobal/10);
 
 % Guardar a rede
-str = strcat("..\\networks\\", 'netOperatorsAux'); % substituir 'netOperators' por uma variavel generica
-save(str, 'netOperators');
+str = strcat("..\\networks\\", 'netOperators_b2'); % substituir 'netOperators' por uma variavel generica
+save(str, 'netOperatorsAux');
 
 end

@@ -17,11 +17,12 @@ targetMatrix = [];
 count = 1;
 
 %% Ler, redimensionar e preparar os targets
+fprintf('\nA ler imagens...\nPastas acessadas:\n');
 for i=1:NUM_FOLDERS
     % Definir o caminho para a pasta
-    switch(i)
+    switch(i-1)
         case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            FOLDER_PATH = sprintf('../NN_datasets/start/%d/',i);
+            FOLDER_PATH = sprintf('../NN_datasets/start/%d/',i-1);
         case 10 % add
             FOLDER_PATH = '../NN_datasets/start/add/';
         case 11 % div
@@ -31,6 +32,9 @@ for i=1:NUM_FOLDERS
         case 13 % sub
             FOLDER_PATH = '../NN_datasets/start/sub/';
     end
+
+    % Mostrar as pastas acessadas
+    fprintf('%s\n', FOLDER_PATH);
 
     % Percorrer os 5 ficheiros dentro da pasta i
     for j=1:NUM_FILES
