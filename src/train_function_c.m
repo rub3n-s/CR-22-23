@@ -1,12 +1,12 @@
-function train_function_b()
-%% Definir Constantes e Variaveis
+function train_function_c()
+%% Definir Constantes
 % Resolucao das imagens
 % Tamanho padrao das imagens 150x150
 % Minimo 25x25
 IMG_RES = [25 25];
 
 % Numero de ficheiros de imagem por pasta
-NUM_FILES = 50;
+NUM_FILES = 3;
 
 % Numero de pastas
 NUM_FOLDERS = 14;
@@ -21,18 +21,18 @@ for i=1:NUM_FOLDERS
     % Definir o caminho para a pasta
     switch(i)
         case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            FOLDER_PATH = sprintf('NN_datasets/train/%d/',i);
+            FOLDER_PATH = sprintf('../NN_datasets/custom/%d/',i);
         case 10 % add
-            FOLDER_PATH = 'NN_datasets/train/add/';
+            FOLDER_PATH = '../NN_datasets/custom/add/';
         case 11 % div
-            FOLDER_PATH = 'NN_datasets/train/div/';
+            FOLDER_PATH = '../NN_datasets/custom/div/';
         case 12 % mul
-            FOLDER_PATH = 'NN_datasets/train/mul/';
+            FOLDER_PATH = '../NN_datasets/custom/mul/';
         case 13 % sub
-            FOLDER_PATH = 'NN_datasets/train/sub/';
+            FOLDER_PATH = '../NN_datasets/custom/sub/';
     end
 
-    % Percorrer os ficheiros (50) dentro da pasta i
+    % Percorrer os 3 ficheiros dentro da pasta i
     for j=1:NUM_FILES
         img = imread(strcat(FOLDER_PATH,sprintf('%d.png',j)));
         img = im2gray(img);
@@ -59,7 +59,7 @@ vec12 = repelem(12, NUM_FILES);
 vec13 = repelem(13, NUM_FILES);
 vec14 = repelem(14, NUM_FILES);
 
-% Preencher a matriz a partir dos vetores
+% Obter a matriz a partir dos vetores
 targetMatrix = [vec1, vec2, vec3, vec4, vec5, vec6, vec7, ...
                 vec8, vec9, vec10, vec11, vec12, vec13, vec14];
 
@@ -67,8 +67,8 @@ target = onehotencode(targetMatrix,1,'ClassNames',1:14);
 in = binaryMatrix;
 
 %% Treinar rede
-% Testar com x neuronios e y camadas escondidas
-net = feedforwardnet([5 5 5]);
+% Testar com 10 camadas escondidas
+net = feedforwardnet(10);
 
 %% Configurar a Rede
 % Função de Ativação
@@ -141,6 +141,7 @@ end
 
 %% Apresentar a Media
 fprintf('\nApos 10 Iterações:\n')
-fprintf('\tMedia Precisao Total = %f\n', sumGlobal/10);
-fprintf('\tMedia Precisao Teste = %f\n', sumTest/10);
+fprintf('\tMedia Precisao Total = %.2f\n', sumGlobal/10);
+fprintf('\tMedia Precisao Teste = %.2f\n', sumTest/10);
+
 end

@@ -25,7 +25,7 @@ targetMatrix = [];
 count = 1;
 for i=1:NUM_DIGIT_FOLDERS
     % Definir o caminho para a pasta
-    FOLDER_PATH = sprintf('NN_datasets/train/%d/',i-1);    
+    FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i-1);    
 
     % Percorrer os ficheiros (50) dentro da pasta i
     for j=1:NUM_FILES
@@ -141,13 +141,13 @@ for i=1:NUM_OPERATOR_FOLDERS
     % Definir o caminho para a pasta
     switch(i)
         case 1 % add
-            FOLDER_PATH = 'NN_datasets/train/add/';
+            FOLDER_PATH = '../NN_datasets/train/add/';
         case 2 % div
-            FOLDER_PATH = 'NN_datasets/train/div/';
+            FOLDER_PATH = '../NN_datasets/train/div/';
         case 3 % mul
-            FOLDER_PATH = 'NN_datasets/train/mul/';
+            FOLDER_PATH = '../NN_datasets/train/mul/';
         case 4 % sub
-            FOLDER_PATH = 'NN_datasets/train/sub/';
+            FOLDER_PATH = '../NN_datasets/train/sub/';
     end
 
     % Percorrer os 50 ficheiros dentro da pasta i
