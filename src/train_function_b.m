@@ -105,6 +105,9 @@ net.divideParam.testRatio = 0.15;
 sumGlobal = 0;
 sumTest = 0;
 
+netGlobal = 0;
+netTest = 0;
+
 for k=1:10
     fprintf('\n---------- Iteracao [%d] ----------\n',k);    
     %% Treinar, Simular e Apresentar Resultados
@@ -123,9 +126,9 @@ for k=1:10
         end
     end
     
-    accuracy = r/size(out,2)*100;
-    sumGlobal= sumGlobal + accuracy;
-    fprintf('\tPrecisao Global = %.2f\n', k, accuracy)
+    globalAccuracy = r/size(out,2)*100;
+    sumGlobal= sumGlobal + globalAccuracy;
+    fprintf('\tPrecisao Global = %.2f\n', k, globalAccuracy)
 
     %plotconfusion(target,out) % Matriz de confusao
 
@@ -148,9 +151,9 @@ for k=1:10
       end
     end
 
-    accuracy = r/size(tr.testInd,2)*100;
-    sumTest= sumTest + accuracy;
-    fprintf('\tPrecisao Teste = %.2f\n', k, accuracy);    
+    testAccuracy = r/size(tr.testInd,2)*100;
+    sumTest = sumTest + testAccuracy;
+    fprintf('\tPrecisao Teste = %.2f\n', k, testAccuracy);    
 
     %% Desempenho
     %disp(tr.performFcn);
@@ -158,9 +161,19 @@ for k=1:10
     disp(['\tValidation Performance: ' num2str(tr.best_vperf)]);
     disp(['\tTest Performance: ' num2str(tr.best_tperf)]);
 
-    %% Guardar a rede
-    save('net.mat', 'net');
+    %% Guardar Valores da Net
+    % Guardar a primeira iteracao ou a net que tiver melhores valores de
+    % precisao
+    if (k == 1 || globalAccuracy > netGlobal && testAccuracy > netTest)
+        netGlobal = globalAccuracy;
+        netTest = testAccuracy;
+        netAux = net; 
+    end    
 end
+
+%% Guardar a rede
+str = strcat("..\\networks\\", 'net_b'); % substituir 'net' por uma variavel generica
+save(str, 'netAux');
 
 %% Apresentar a Media
 fprintf('\n---------- Apos 10 Iterações ----------\n')
