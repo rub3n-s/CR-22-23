@@ -1,7 +1,5 @@
 function output = trainFunction_d(imgPath,netPath) 
 
-clc;
-
 % Carregar a rede previamente treinada
 load(netPath, 'net');
 

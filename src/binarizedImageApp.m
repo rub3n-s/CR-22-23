@@ -2,7 +2,7 @@ function [in] =  binarizedImageApp(imgPath, inMatrix)
 %% Definir Constantes e Variaveis
 % Resolucao das imagens
 % Tamanho padrao das imagens 150x150
-% Minimo 25x25
+% Minimo 25x25  
 IMG_RES = [25 25]; 
 
 %% Ler, redimensionar as imagens e preparar os targets
