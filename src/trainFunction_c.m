@@ -1,12 +1,12 @@
-function train_function_b()
-%% Definir Constantes e Variaveis
+function trainFunction_c()
+%% Definir Constantes
 % Resolucao das imagens
 % Tamanho padrao das imagens 150x150
 % Minimo 25x25
 IMG_RES = [25 25];
 
 % Numero de ficheiros de imagem por pasta
-NUM_FILES = 50;
+NUM_FILES = 3;
 
 % Numero de pastas
 NUM_FOLDERS = 14;
@@ -17,28 +17,22 @@ targetMatrix = [];
 count = 1;
 
 %% Ler, redimensionar e preparar os targets
-fprintf('A ler imagens...\n');
 for i=1:NUM_FOLDERS
-    index = i-1;
-    if (index >= 0 && index < 10)
-        fprintf('../NN_datasets/train/%d/',ind);
-        FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i);
-    end
     % Definir o caminho para a pasta
-    switch(i-1)
-        %case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            %FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i);
+    switch(i)
+        case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+            FOLDER_PATH = sprintf('../NN_datasets/custom/%d/',i);
         case 10 % add
-            FOLDER_PATH = '../NN_datasets/train/add/';
+            FOLDER_PATH = '../NN_datasets/custom/add/';
         case 11 % div
-            FOLDER_PATH = '../NN_datasets/train/div/';
+            FOLDER_PATH = '../NN_datasets/custom/div/';
         case 12 % mul
-            FOLDER_PATH = '../NN_datasets/train/mul/';
+            FOLDER_PATH = '../NN_datasets/custom/mul/';
         case 13 % sub
-            FOLDER_PATH = '../NN_datasets/train/sub/';
+            FOLDER_PATH = '../NN_datasets/custom/sub/';
     end
 
-    % Percorrer os ficheiros (50) dentro da pasta i
+    % Percorrer os 3 ficheiros dentro da pasta i
     for j=1:NUM_FILES
         img = imread(strcat(FOLDER_PATH,sprintf('%d.png',j)));
         img = im2gray(img);
@@ -50,22 +44,22 @@ for i=1:NUM_FOLDERS
 end
 
 % Obter todos os vetores (cada um corresponde a uma pasta)
-vec1 = repelem(1, NUM_FILES);       % 0
-vec2 = repelem(2, NUM_FILES);       % 1
-vec3 = repelem(3, NUM_FILES);       % 2
-vec4 = repelem(4, NUM_FILES);       % 3
-vec5 = repelem(5, NUM_FILES);       % 4
-vec6 = repelem(6, NUM_FILES);       % 5
-vec7 = repelem(7, NUM_FILES);       % 6
-vec8 = repelem(8, NUM_FILES);       % 7
-vec9 = repelem(9, NUM_FILES);       % 8
-vec10 = repelem(10, NUM_FILES);     % 9
-vec11 = repelem(11, NUM_FILES);     % +
-vec12 = repelem(12, NUM_FILES);     % /
-vec13 = repelem(13, NUM_FILES);     % *
-vec14 = repelem(14, NUM_FILES);     % -
+vec1 = repelem(1, NUM_FILES);
+vec2 = repelem(2, NUM_FILES);
+vec3 = repelem(3, NUM_FILES);
+vec4 = repelem(4, NUM_FILES);
+vec5 = repelem(5, NUM_FILES);
+vec6 = repelem(6, NUM_FILES);
+vec7 = repelem(7, NUM_FILES);
+vec8 = repelem(8, NUM_FILES);
+vec9 = repelem(9, NUM_FILES);
+vec10 = repelem(10, NUM_FILES);
+vec11 = repelem(11, NUM_FILES);
+vec12 = repelem(12, NUM_FILES);
+vec13 = repelem(13, NUM_FILES);
+vec14 = repelem(14, NUM_FILES);
 
-% Preencher a matriz a partir dos vetores
+% Obter a matriz a partir dos vetores
 targetMatrix = [vec1, vec2, vec3, vec4, vec5, vec6, vec7, ...
                 vec8, vec9, vec10, vec11, vec12, vec13, vec14];
 
@@ -73,7 +67,7 @@ target = onehotencode(targetMatrix,1,'ClassNames',1:14);
 in = binaryMatrix;
 
 %% Treinar rede
-% Testar com x neuronios e y camadas escondidas
+% Testar com 10 camadas escondidas
 net = feedforwardnet(10);
 
 %% Configurar a Rede
@@ -82,28 +76,15 @@ net.layers{1}.transferFcn = 'tansig';
 net.layers{2}.transferFcn = 'purelin';
 %net.layers{3}.transferFcn = 'purelin';
 
-% Funções de Ativacao:
-%   tasing
-%   purelin;
-%   logsig;
-%   hardlim;
-%   hardlims;
-%   compet;
-%   elliotsig;
-
 % Numero de Epocas
 net.trainParam.epochs = 100;
 
 % Funcao de Treino
 net.trainFcn = 'trainlm';
-%net.trainFcn = 'trainbfg';
-%net.trainFcn = 'traingd';
-%net.trainFcn = 'trainscg';
-%net.trainFcn = 'trainoss';
 
 % Divisao de Treino
 net.divideFcn = 'dividerand';
-net.divideParam.trainRatio = 0.7;
+net.divideParam.trainRatio = 0.70;
 net.divideParam.valRatio = 0.15;
 net.divideParam.testRatio = 0.15;
 
@@ -115,7 +96,6 @@ netGlobal = 0;
 netTest = 0;
 
 for k=1:10
-    fprintf('\n---------- Iteracao [%d] ----------\n',k);    
     %% Treinar, Simular e Apresentar Resultados
     % Treinar 
     [net,tr] = train(net, in, target);    
@@ -134,9 +114,7 @@ for k=1:10
     
     globalAccuracy = r/size(out,2)*100;
     sumGlobal= sumGlobal + globalAccuracy;
-    fprintf('\tPrecisao Global = %.2f\n', globalAccuracy)
-
-    %plotconfusion(target,out) % Matriz de confusao
+    fprintf('\nPrecisao Global = %.2f\n', k, globalAccuracy)
 
     % SIMULAR A REDE APENAS NO CONJUNTO DE TESTE
     TInput = in(:, tr.testInd);
@@ -158,14 +136,8 @@ for k=1:10
     end
 
     testAccuracy = r/size(tr.testInd,2)*100;
-    sumTest = sumTest + testAccuracy;
-    fprintf('\tPrecisao Teste = %.2f\n', testAccuracy);    
-
-    %% Desempenho
-    %disp(tr.performFcn);
-    disp(['Train Performance: ' num2str(tr.best_perf)])
-    disp(['Validation Performance: ' num2str(tr.best_vperf)]);
-    disp(['Test Performance: ' num2str(tr.best_tperf)]);
+    sumTest= sumTest + testAccuracy;
+    fprintf('Precisao Teste = %.2f\n', k, testAccuracy);    
 
     %% Guardar Valores da Net
     % Guardar a primeira iteracao ou a net que tiver melhores valores de
@@ -174,15 +146,18 @@ for k=1:10
         netGlobal = globalAccuracy;
         netTest = testAccuracy;
         netAux = net; 
-    end    
+    end 
+
+    %plotconfusion(target,out) % Matriz de confusao
 end
 
 %% Guardar a rede
-str = strcat("..\\networks\\", 'net_b'); % substituir 'net' por uma variavel generica
+str = strcat("../networks/", 'net_c'); % substituir 'net' por uma variavel generica
 save(str, 'netAux');
 
 %% Apresentar a Media
-fprintf('\n---------- Apos 10 Iterações ----------\n')
+fprintf('\nApos 10 Iterações:\n')
 fprintf('\tMedia Precisao Total = %.2f\n', sumGlobal/10);
 fprintf('\tMedia Precisao Teste = %.2f\n', sumTest/10);
+
 end

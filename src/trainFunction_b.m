@@ -1,4 +1,4 @@
-function train_function_b()
+function trainFunction_b()
 %% Definir Constantes e Variaveis
 % Resolucao das imagens
 % Tamanho padrao das imagens 150x150
@@ -72,7 +72,7 @@ in = binaryMatrix;
 
 %% Treinar rede
 % Testar com x neuronios e y camadas escondidas
-net = feedforwardnet([5 5]);
+net = feedforwardnet([10 10 10]);
 
 %% Configurar a Rede
 % Função de Ativação
@@ -81,7 +81,7 @@ net.layers{2}.transferFcn = 'tansig';
 net.layers{3}.transferFcn = 'purelin';
 
 % Funções de Ativacao:
-%   tasing
+%   tansig
 %   purelin;
 %   logsig;
 %   hardlim;
@@ -108,7 +108,8 @@ net.divideParam.testRatio = 0.15;
 %% Realizar 10 iteracoes de treino e calcular media
 sumGlobal = 0;
 sumTest = 0;
-sumPerformance = 0;
+sumPerformanceTest = 0;
+sumPerformanceTrain = 0;
 
 netGlobal = 0;
 netTest = 0;
@@ -165,7 +166,10 @@ for k=1:10
     disp(['Train Performance: ' num2str(tr.best_perf)])
     disp(['Validation Performance: ' num2str(tr.best_vperf)]);
     disp(['Test Performance: ' num2str(tr.best_tperf)]);
-    sumPerformance = sumPerformance + tr.best_perf;
+    
+    % Soma das performances para obter a media no final das 10 iteracoes
+    sumPerformanceTrain = sumPerformanceTrain + tr.best_perf;
+    sumPerformanceTest = sumPerformanceTest + tr.best_tperf;
 
     %% Guardar Valores da Net
     % Guardar a primeira iteracao ou a net que tiver melhores valores de
@@ -174,16 +178,18 @@ for k=1:10
         netGlobal = globalAccuracy;
         netTest = testAccuracy;
         netAux = net; 
-    end    
+    end
 end
 
 %% Guardar a rede
-str = strcat("..\\networks\\", 'net_b'); % substituir 'net' por uma variavel generica
-save(str, 'netAux');
+net = netAux;
+str = strcat("../networks/", 'net_b'); % substituir 'net' por uma variavel generica
+save(str, 'net');
 
 %% Apresentar a Media
 fprintf('\n---------- Apos 10 Iterações ----------\n')
 fprintf('\tMedia Precisao Total = %.2f\n', sumGlobal/10);
 fprintf('\tMedia Precisao Teste = %.2f\n', sumTest/10);
-fprintf('\tMedia Performance = %.2f\n', sumPerformance/10)
+fprintf('\tMedia Performance Treino = %.2f\n', sumPerformanceTrain/10)
+fprintf('\tMedia Performance Teste = %.2f\n', sumPerformanceTest/10)
 end

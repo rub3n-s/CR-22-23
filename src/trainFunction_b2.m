@@ -1,4 +1,4 @@
-function train_function_b2()
+function trainFunction_b2()
 %% NOTA
 %   Neste exemplo são utilizadas duas redes
 %       Uma para os digitos de 0 a 9
@@ -287,7 +287,7 @@ fprintf('\tMedia de Precisao Teste = %.2f\n', sumDigitsTest/10);
 fprintf('\tMedia de Precisao Global = %.2f\n', sumDigitsGlobal/10);
 
 % Guardar a rede
-str = strcat("..\\networks\\", 'netDigits_b2'); % substituir 'netOperators' por uma variavel generica
+str = strcat("../networks/", 'netDigits_b2'); % substituir 'netOperators' por uma variavel generica
 save(str, 'netDigitsAux');
 
 %% [Operadores] Apresentar a Media
@@ -296,7 +296,7 @@ fprintf('\tMedia de Precisao Teste = %.2f\n', sumOperatorsTest/10);
 fprintf('\tMedia de Precisao Global = %.2f\n', sumOperatorsGlobal/10);
 
 % Guardar a rede
-str = strcat("..\\networks\\", 'netOperators_b2'); % substituir 'netOperators' por uma variavel generica
+str = strcat("../networks/", 'netOperators_b2'); % substituir 'netOperators' por uma variavel generica
 save(str, 'netOperatorsAux');
 
 end

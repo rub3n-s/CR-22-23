@@ -1,4 +1,4 @@
-function train_function_a()
+function trainFunction_a()
 %% Definir Constantes
 % Resolucao das imagens
 % Tamanho padrao das imagens 150x150
