@@ -1,6 +1,6 @@
 function output = trainFunction_d(imgPath,netPath) 
 
-disp(['A iniciar leitura do ficheiro ', imgPath]);
+disp(['A iniciar leitura'])
 
 % Carregar a rede previamente treinada
 load(netPath, 'net');
