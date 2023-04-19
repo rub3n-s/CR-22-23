@@ -1,4 +1,23 @@
-function trainFunction_b()
+function [perfGlobal,perfTest] = genericTrainFunction(...
+                                    camadasEscondidas, ...
+                                    neuroniosCamada1, neuroniosCamada2, neuroniosCamada3, ...
+                                    funcTreino,  funcAtivacao1, funcAtivacao2, funcAtivacao3, funcDivisao, ...
+                                    trainRatio, val, test, ...
+                                    pasta, nomeRede)
+%% Informacao dos Parametros Recebidos
+clc;
+fprintf('Camadas Escondidas: %d\n',camadasEscondidas);
+fprintf('Neuronios Camada 1: %d\n',neuroniosCamada1);
+fprintf('Neuronios Camada 2: %d\n',neuroniosCamada2);
+fprintf('Neuronios Camada 3: %d\n',neuroniosCamada3);
+fprintf('Funcao de Treino: %s\n',funcTreino);
+fprintf('Funcao de Ativacao 1: %s\n',funcAtivacao1);
+fprintf('Funcao de Ativacao 2: %s\n',funcAtivacao2);
+fprintf('Funcao de Ativacao 3: %s\n',funcAtivacao3);
+fprintf('Funcao de Divisao: %s\n',funcDivisao);
+fprintf('Pasta Dataset: %s\n',pasta);
+fprintf('Nome Rede: %s\n',nomeRede);
+
 %% Definir Constantes e Variaveis
 % Resolucao das imagens
 % Tamanho padrao das imagens 150x150
@@ -6,7 +25,14 @@ function trainFunction_b()
 IMG_RES = [25 25];
 
 % Numero de ficheiros de imagem por pasta
-NUM_FILES = 50;
+switch(pasta)
+    case 'start'
+        NUM_FILES = 5;
+    case 'train'
+        NUM_FILES = 50;
+    case 'custom'
+        NUM_FILES = 3;
+end
 
 % Numero de pastas
 NUM_FOLDERS = 14;
@@ -22,21 +48,21 @@ for i=1:NUM_FOLDERS
     % Definir o caminho para a pasta
     switch(i-1)
         case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i-1);
+            FOLDER_PATH = sprintf('../NN_datasets/%s/%d/',pasta,i-1);
         case 10 % add
-            FOLDER_PATH = '../NN_datasets/train/add/';
+            FOLDER_PATH = sprintf('../NN_datasets/%s/add/',pasta);
         case 11 % div
-            FOLDER_PATH = '../NN_datasets/train/div/';
+            FOLDER_PATH = sprintf('../NN_datasets/%s/div/',pasta);
         case 12 % mul
-            FOLDER_PATH = '../NN_datasets/train/mul/';
+            FOLDER_PATH = sprintf('../NN_datasets/%s/mul/',pasta);
         case 13 % sub
-            FOLDER_PATH = '../NN_datasets/train/sub/';
+            FOLDER_PATH = sprintf('../NN_datasets/%s/sub/',pasta);
     end
 
     % Mostrar as pastas acessadas
     fprintf('%s\n', FOLDER_PATH);
 
-    % Percorrer os ficheiros (50) dentro da pasta i
+    % Percorrer os ficheiros dentro da pasta i
     for j=1:NUM_FILES
         img = imread(strcat(FOLDER_PATH,sprintf('%d.png',j)));
         img = im2gray(img);
@@ -72,40 +98,36 @@ in = binaryMatrix;
 
 %% Treinar rede
 % Testar com x neuronios e y camadas escondidas
-net = feedforwardnet([10 10 10]);
+switch(camadasEscondidas)
+    case 1
+        net = feedforwardnet(neuroniosCamada1);
+    case 2
+        net = feedforwardnet([neuroniosCamada1 neuroniosCamada2]);
+    case 3
+        net = feedforwardnet([neuroniosCamada1 neuroniosCamada2 neuroniosCamada3]);
+end
 
 %% Configurar a Rede
 % Função de Ativação
-net.layers{1}.transferFcn = 'tansig';
-net.layers{2}.transferFcn = 'tansig';
-net.layers{3}.transferFcn = 'purelin';
+net.layers{1}.transferFcn = funcAtivacao1;
+net.layers{2}.transferFcn = funcAtivacao2;
 
-% Funções de Ativacao:
-%   tansig
-%   purelin;
-%   logsig;
-%   hardlim;
-%   hardlims;
-%   compet;
-%   elliotsig;
+if camadasEscondidas == 3
+    net.layers{3}.transferFcn = funcAtivacao3;
+end
 
 % Numero de Epocas
 net.trainParam.epochs = 100;
 
 % Funcao de Treino
-net.trainFcn = 'trainlm';
-%net.trainFcn = 'trainbfg';
-%net.trainFcn = 'traingd';
-%net.trainFcn = 'trainscg';
-%net.trainFcn = 'trainoss';
+net.trainFcn = funcTreino;
 
 % Divisao de Treino
-net.divideFcn = 'dividerand';
-net.divideParam.trainRatio = 0.7;
-net.divideParam.valRatio = 0.15;
-net.divideParam.testRatio = 0.15;
+net.divideFcn = funcDivisao;
+net.divideParam.trainRatio = trainRatio;
+net.divideParam.valRatio = val;
+net.divideParam.testRatio = test;
 
-%% Realizar 10 iteracoes de treino e calcular media
 sumGlobal = 0;
 sumTest = 0;
 sumPerformanceTest = 0;
@@ -183,7 +205,7 @@ end
 
 %% Guardar a rede
 net = netAux;
-str = strcat("../networks/", 'net_b');
+str = strcat("../networks/", nomeRede); 
 save(str, 'net');
 
 %% Apresentar a Media
@@ -192,4 +214,7 @@ fprintf('\tMedia Precisao Total = %.2f\n', sumGlobal/10);
 fprintf('\tMedia Precisao Teste = %.2f\n', sumTest/10);
 fprintf('\tMedia Performance Treino = %.2f\n', sumPerformanceTrain/10);
 fprintf('\tMedia Performance Teste = %.2f\n', sumPerformanceTest/10);
+
+perfGlobal = sumGlobal/10;
+perfTest = sumTest/10;
 end

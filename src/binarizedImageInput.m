@@ -1,4 +1,8 @@
-function [in] =  binarizedImageApp(imgPath, inMatrix)
+function [in] =  binarizedImageInput(imgPath, inMatrix)
+%% Conceito da Funcao
+% Criar uma matriz binaria a partir de uma imagem recebida por parametro
+% e devolver essa matriz binaria como input
+
 %% Definir Constantes e Variaveis
 % Resolucao das imagens
 % Tamanho padrao das imagens 150x150
