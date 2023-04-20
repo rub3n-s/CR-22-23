@@ -40,6 +40,9 @@ targetMatrix = [];
 fprintf('\n[Digitos] A ler imagens...\nPastas acessadas:\n');
 count = 1;
 for i=1:NUM_DIGIT_FOLDERS
+    % Apenas para debug (Mostrar o path da pasta que esta a ser acedida)
+    disp(fullfile('..','NN_datasets',DATASET_FOLDER,sprintf('%d',i-1)));
+
     % Percorrer os ficheiros (50) dentro da pasta i
     for j=1:NUM_FILES
         % Definir o caminho para o ficheiro .png
@@ -167,10 +170,22 @@ targetMatrix = [];
 count = 1;
 fprintf('\n[Operadores] A ler imagens...\nPastas acessadas:\n');
 for i=1:NUM_OPERATOR_FOLDERS
+    % Apenas para debug (Mostrar o path da pasta que esta a ser acedida)
+    switch(i)
+        case 1     % add
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'add'));
+        case 2     % div
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'div'));
+        case 3     % mul
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'mul'));
+        case 4     % sub
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'sub'));
+    end
+
     % Percorrer os 50 ficheiros dentro da pasta i
     for j=1:NUM_FILES
         % Definir o caminho para o ficheiro .png
-        switch(i-1)
+        switch(i)
             case 1     % add
                 file = fullfile('..','NN_datasets',DATASET_FOLDER,'add',sprintf('%d.png',j));
             case 2     % div
@@ -294,8 +309,8 @@ fprintf('\tMedia de Precisao Teste = %.2f\n', sumDigitsTest/10);
 
 % Guardar a rede
 net = netDigitsAux;
-str = strcat("../networks/", sprintf('netDigits_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumDigitsGlobal/10),round(sumDigitsTest/10)));
-save(str, 'net');
+netFile = fullfile('..','networks',sprintf('netDigits_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumDigitsGlobal/10),round(sumDigitsTest/10)));
+save(netFile, 'net');
 
 %% [Operadores] Apresentar a Media
 fprintf('\n ------ [Operadores] Apos 10 iteracoes ------\n');
@@ -304,7 +319,7 @@ fprintf('\tMedia de Precisao Teste = %.2f\n', sumOperatorsTest/10);
 
 % Guardar a rede
 net = netOperatorsAux;
-str = strcat("../networks/", sprintf('netOperators_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumOperatorsGlobal/10),round(sumOperatorsTest/10)));
-save(str, 'net');
+netFile = fullfile('..','networks',sprintf('netOperators_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumOperatorsGlobal/10),round(sumOperatorsTest/10)));
+save(netFile, 'net');
 
 end

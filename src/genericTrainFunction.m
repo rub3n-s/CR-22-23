@@ -200,8 +200,8 @@ end
 
 %% Guardar a rede
 net = netAux;
-str = strcat("../networks/", sprintf('%s_pmg%d_pmt%d',nomeRede,round(sumGlobal/10),round(sumTest/10)));
-save(str, 'net');
+netFile = fullfile('..','networks',sprintf('net_%s_pmg%d_pmt%d',nomeRede,round(sumGlobal/10),round(sumTest/10)));
+save(netFile, 'net');
 
 %% Apresentar a Media
 fprintf('\n---------- Apos 10 Iterações ----------\n')

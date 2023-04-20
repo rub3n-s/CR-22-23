@@ -8,10 +8,6 @@ IMG_RES = [25 25];
 % Pasta do Dataset
 DATASET_FOLDER = 'start';
 
-% Caminho base do Dataset
-%BASE_PATH = sprintf('../NN_datasets/%s/',DATASET_FOLDER);
-%BASE_PATH = fullfile('NN_datasets',DATASET_FOLDER)
-
 % Numero de ficheiros de imagem por pasta
 NUM_FILES = 5;
 

@@ -40,15 +40,14 @@ targetMatrix = [];
 fprintf('\n[Digitos] A ler imagens...\nPastas acessadas:\n');
 count = 1;
 for i=1:NUM_DIGIT_FOLDERS
-    % Definir o caminho para a pasta
-    FOLDER_PATH = strcat(BASE_PATH,sprintf('%d/',i-1));   
-
-    % Mostrar as pastas acessadas
-    fprintf('%s\n', FOLDER_PATH);
+    % Apenas para debug (Mostrar o path da pasta que esta a ser acedida)
+    disp(fullfile('..','NN_datasets',DATASET_FOLDER,sprintf('%d',i-1)));
 
     % Percorrer os ficheiros (50) dentro da pasta i
     for j=1:NUM_FILES
-        img = imread(strcat(FOLDER_PATH,sprintf('%d.png',j)));
+        % Definir o caminho para o ficheiro .png
+        file = fullfile('..','NN_datasets',DATASET_FOLDER,sprintf('%d',i-1),sprintf('%d.png',j));
+        img = imread(file);
         img = im2gray(img);
         img = imresize(img, IMG_RES);
         binarizedImg = imbinarize(img);
@@ -94,9 +93,9 @@ netDigits.trainFcn = 'trainlm';
 
 % Divisao de Treino
 netDigits.divideFcn = 'dividerand';
-netDigits.divideParam.trainRatio = 0.70;
-netDigits.divideParam.valRatio = 0.15;
-netDigits.divideParam.testRatio = 0.15;
+netDigits.divideParam.trainRatio = 0.4;
+netDigits.divideParam.valRatio = 0.3;
+netDigits.divideParam.testRatio = 0.3;
 
 % ======== Treinar, Simular e Apresentar Resultados ========
 % Realizar 10 iteracoes de treino e calcular media
@@ -156,7 +155,7 @@ for k=1:10
     if (k == 1 || globalAccuracy > netDigitsGlobal && testAccuracy > netDigitsTest)
         netDigitsGlobal = globalAccuracy;
         netDigitsTest = testAccuracy;
-        netDigitsAux = net; 
+        netDigitsAux = netDigits; 
     end    
 
     %plotconfusion(target,out) % Matriz de confusao
@@ -171,24 +170,32 @@ targetMatrix = [];
 count = 1;
 fprintf('\n[Operadores] A ler imagens...\nPastas acessadas:\n');
 for i=1:NUM_OPERATOR_FOLDERS
-    % Definir o caminho para a pasta
+    % Apenas para debug (Mostrar o path da pasta que esta a ser acedida)
     switch(i)
-        case 1 % add
-            FOLDER_PATH = strcat(BASE_PATH,'add/');
-        case 2 % div
-            FOLDER_PATH = strcat(BASE_PATH,'div/');
-        case 3 % mul
-            FOLDER_PATH = strcat(BASE_PATH,'mul/');
-        case 4 % sub
-            FOLDER_PATH = strcat(BASE_PATH,'sub/');
+        case 1     % add
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'add'));
+        case 2     % div
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'div'));
+        case 3     % mul
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'mul'));
+        case 4     % sub
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'sub'));
     end
-
-    % Mostrar as pastas acessadas
-    fprintf('%s\n', FOLDER_PATH);
 
     % Percorrer os 50 ficheiros dentro da pasta i
     for j=1:NUM_FILES
-        img = imread(strcat(FOLDER_PATH,sprintf('%d.png',j)));
+        % Definir o caminho para o ficheiro .png
+        switch(i)
+            case 1     % add
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'add',sprintf('%d.png',j));
+            case 2     % div
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'div',sprintf('%d.png',j));
+            case 3     % mul
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'mul',sprintf('%d.png',j));
+            case 4     % sub
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'sub',sprintf('%d.png',j));
+        end        
+        img = imread(file);
         img = im2gray(img);
         img = imresize(img, IMG_RES);
         binarizedImg = imbinarize(img);
@@ -227,9 +234,9 @@ netOperators.trainFcn = 'trainlm';
 
 % Divisao de Treino
 netOperators.divideFcn = 'dividerand';
-netOperators.divideParam.trainRatio = 0.70;
-netOperators.divideParam.valRatio = 0.15;
-netOperators.divideParam.testRatio = 0.15;
+netOperators.divideParam.trainRatio = 0.4;
+netOperators.divideParam.valRatio = 0.3;
+netOperators.divideParam.testRatio = 0.3;
 
 % ======== Treinar, Simular e Apresentar Resultados ========
 % Realizar 10 iteracoes de treino e calcular media
@@ -289,7 +296,7 @@ for k=1:10
     if (k == 1 || globalAccuracy > netOperatorsGlobal && testAccuracy > netOperatorsTest)
         netOperatorsGlobal = globalAccuracy;
         netOperatorsTest = testAccuracy;
-        netOperatorsAux = net; 
+        netOperatorsAux = netOperators; 
     end    
 
     %plotconfusion(target,out) % Matriz de confusao
@@ -297,25 +304,23 @@ end
 
 %% [Digitos] Apresentar a Media
 fprintf('\n ------ [Digitos] Apos 10 iteracoes ------\n');
-fprintf('\tMedia de Precisao Teste = %.2f\n', sumDigitsTest/10);
 fprintf('\tMedia de Precisao Global = %.2f\n', sumDigitsGlobal/10);
+fprintf('\tMedia de Precisao Teste = %.2f\n', sumDigitsTest/10);
 
 % Guardar a rede
 net = netDigitsAux;
-str = strcat("../networks/", sprintf('netDigits_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumDigitsGlobal/10),round(sumDigitsTest/10)));
-save(str, 'net');
+%str = strcat("../networks/", sprintf('netDigits_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumDigitsGlobal/10),round(sumDigitsTest/10)));
+netFile = fullfile('..','networks',sprintf('netDigits_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumGlobal/10),round(sumTest/10)));
+save(netFile, 'net');
 
 %% [Operadores] Apresentar a Media
 fprintf('\n ------ [Operadores] Apos 10 iteracoes ------\n');
-fprintf('\tMedia de Precisao Teste = %.2f\n', sumOperatorsTest/10);
 fprintf('\tMedia de Precisao Global = %.2f\n', sumOperatorsGlobal/10);
+fprintf('\tMedia de Precisao Teste = %.2f\n', sumOperatorsTest/10);
 
 % Guardar a rede
-net = netDigitsAux;
-str = strcat("../networks/", sprintf('netDigits_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumDigitsGlobal/10),round(sumDigitsTest/10)));
-save(str, 'net');
-
-str = strcat("../networks/", 'netOperators_b2'); % substituir 'netOperators' por uma variavel generica
-save(str, 'netOperatorsAux');
+net = netOperatorsAux;
+netFile = fullfile('..','networks',sprintf('netOperators_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumGlobal/10),round(sumTest/10)));
+save(netFile, 'net');
 
 end

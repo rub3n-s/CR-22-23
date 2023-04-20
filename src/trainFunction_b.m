@@ -31,6 +31,20 @@ count = 1;
 %% Ler, redimensionar e preparar os targets
 fprintf('\nA ler imagens...\nPastas acessadas:\n');
 for i=1:NUM_FOLDERS
+    % Apenas para debug (Mostrar o path da pasta que esta a ser acedida)
+    switch(i-1)
+        case 10     % add
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'add'));
+        case 11     % div
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'div'));
+        case 12     % mul
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'mul'));
+        case 13     % sub
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,'sub'));
+        otherwise   % [0,9]
+            disp(fullfile('..','NN_datasets',DATASET_FOLDER,sprintf('%d',i-1)));
+    end
+
     % Percorrer os ficheiros (50) dentro da pasta i
     for j=1:NUM_FILES
         switch(i-1)
@@ -108,9 +122,9 @@ net.trainFcn = 'trainlm';
 
 % Divisao de Treino
 net.divideFcn = 'dividerand';
-net.divideParam.trainRatio = 0.4;
-net.divideParam.valRatio = 0.3;
-net.divideParam.testRatio = 0.3;
+net.divideParam.trainRatio = 0.7;
+net.divideParam.valRatio = 0.15;
+net.divideParam.testRatio = 0.15;
 
 %% Realizar 10 iteracoes de treino e calcular media
 sumGlobal = 0;
@@ -192,8 +206,8 @@ end
 
 %% Guardar a rede
 net = netAux;
-str = strcat("../networks/", sprintf('net_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumGlobal/10),round(sumTest/10)));
-save(str, 'net');
+netFile = fullfile('..','networks',sprintf('netB_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumGlobal/10),round(sumTest/10)));
+save(netFile, 'net');
 
 %% Apresentar a Media
 fprintf('\n---------- Apos 10 Iterações ----------\n')
