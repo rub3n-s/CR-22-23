@@ -8,9 +8,6 @@ IMG_RES = [25 25];
 % Pasta do Dataset
 DATASET_FOLDER = 'custom_draw';
 
-% Caminho base do Dataset
-BASE_PATH = sprintf('../NN_datasets/%s/',DATASET_FOLDER);
-
 % Numero de ficheiros de imagem por pasta
 switch(DATASET_FOLDER)
     case 'start'
@@ -31,23 +28,21 @@ count = 1;
 
 %% Ler, redimensionar e preparar os targets
 for i=1:NUM_FOLDERS
-    % Definir o caminho para a pasta
-    switch(i-1)
-        case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            FOLDER_PATH = strcat(BASE_PATH,sprintf('%d/',i-1));
-        case 10 % add
-            FOLDER_PATH = strcat(BASE_PATH,'add/');
-        case 11 % div
-            FOLDER_PATH = strcat(BASE_PATH,'div/');
-        case 12 % mul
-            FOLDER_PATH = strcat(BASE_PATH,'mul/');
-        case 13 % sub
-            FOLDER_PATH = strcat(BASE_PATH,'sub/');
-    end
-
     % Percorrer os 3 ficheiros dentro da pasta i
     for j=1:NUM_FILES
-        img = imread(strcat(FOLDER_PATH,sprintf('%d.png',j)));
+        switch(i-1)
+            case 10     % add
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'add',sprintf('%d.png',j));
+            case 11     % div
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'div',sprintf('%d.png',j));
+            case 12     % mul
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'mul',sprintf('%d.png',j));
+            case 13     % sub
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'sub',sprintf('%d.png',j));
+            otherwise   % [0,9]
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,sprintf('%d',i-1),sprintf('%d.png',j));
+        end        
+        img = imread(file);
         img = im2gray(img);
         img = imresize(img, IMG_RES);
         binarizedImg = imbinarize(img);

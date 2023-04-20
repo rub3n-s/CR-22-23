@@ -40,15 +40,11 @@ targetMatrix = [];
 fprintf('\n[Digitos] A ler imagens...\nPastas acessadas:\n');
 count = 1;
 for i=1:NUM_DIGIT_FOLDERS
-    % Definir o caminho para a pasta
-    FOLDER_PATH = strcat(BASE_PATH,sprintf('%d/',i-1));   
-
-    % Mostrar as pastas acessadas
-    fprintf('%s\n', FOLDER_PATH);
-
     % Percorrer os ficheiros (50) dentro da pasta i
     for j=1:NUM_FILES
-        img = imread(strcat(FOLDER_PATH,sprintf('%d.png',j)));
+        % Definir o caminho para o ficheiro .png
+        file = fullfile('..','NN_datasets',DATASET_FOLDER,sprintf('%d',i-1),sprintf('%d.png',j));
+        img = imread(file);
         img = im2gray(img);
         img = imresize(img, IMG_RES);
         binarizedImg = imbinarize(img);
@@ -171,24 +167,20 @@ targetMatrix = [];
 count = 1;
 fprintf('\n[Operadores] A ler imagens...\nPastas acessadas:\n');
 for i=1:NUM_OPERATOR_FOLDERS
-    % Definir o caminho para a pasta
-    switch(i)
-        case 1 % add
-            FOLDER_PATH = strcat(BASE_PATH,'add/');
-        case 2 % div
-            FOLDER_PATH = strcat(BASE_PATH,'div/');
-        case 3 % mul
-            FOLDER_PATH = strcat(BASE_PATH,'mul/');
-        case 4 % sub
-            FOLDER_PATH = strcat(BASE_PATH,'sub/');
-    end
-
-    % Mostrar as pastas acessadas
-    fprintf('%s\n', FOLDER_PATH);
-
     % Percorrer os 50 ficheiros dentro da pasta i
     for j=1:NUM_FILES
-        img = imread(strcat(FOLDER_PATH,sprintf('%d.png',j)));
+        % Definir o caminho para o ficheiro .png
+        switch(i-1)
+            case 1     % add
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'add',sprintf('%d.png',j));
+            case 2     % div
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'div',sprintf('%d.png',j));
+            case 3     % mul
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'mul',sprintf('%d.png',j));
+            case 4     % sub
+                file = fullfile('..','NN_datasets',DATASET_FOLDER,'sub',sprintf('%d.png',j));
+        end        
+        img = imread(file);
         img = im2gray(img);
         img = imresize(img, IMG_RES);
         binarizedImg = imbinarize(img);
