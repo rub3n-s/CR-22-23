@@ -5,8 +5,23 @@ function trainFunction_b()
 % Minimo 25x25
 IMG_RES = [25 25];
 
+% Pasta do Dataset
+%DATASET_FOLDER = 'start';
+%DATASET_FOLDER = 'train';
+DATASET_FOLDER = 'custom_draw';
+
+% Caminho base do Dataset
+BASE_PATH = sprintf('../NN_datasets/%s/',DATASET_FOLDER);
+
 % Numero de ficheiros de imagem por pasta
-NUM_FILES = 50;
+switch(DATASET_FOLDER)
+    case 'start'
+        NUM_FILES = 5;
+    case 'train'
+        NUM_FILES = 50;
+    case 'custom_draw'
+        NUM_FILES = 3;
+end
 
 % Numero de pastas
 NUM_FOLDERS = 14;
@@ -22,15 +37,15 @@ for i=1:NUM_FOLDERS
     % Definir o caminho para a pasta
     switch(i-1)
         case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            FOLDER_PATH = sprintf('../NN_datasets/train/%d/',i-1);
+            FOLDER_PATH = strcat(BASE_PATH,sprintf('%d/',i-1));
         case 10 % add
-            FOLDER_PATH = '../NN_datasets/train/add/';
+            FOLDER_PATH = strcat(BASE_PATH,'add/');
         case 11 % div
-            FOLDER_PATH = '../NN_datasets/train/div/';
+            FOLDER_PATH = strcat(BASE_PATH,'div/');
         case 12 % mul
-            FOLDER_PATH = '../NN_datasets/train/mul/';
+            FOLDER_PATH = strcat(BASE_PATH,'mul/');
         case 13 % sub
-            FOLDER_PATH = '../NN_datasets/train/sub/';
+            FOLDER_PATH = strcat(BASE_PATH,'sub/');
     end
 
     % Mostrar as pastas acessadas
@@ -72,13 +87,13 @@ in = binaryMatrix;
 
 %% Treinar rede
 % Testar com x neuronios e y camadas escondidas
-net = feedforwardnet([10 10 10]);
+net = feedforwardnet([10]);
 
 %% Configurar a Rede
 % Função de Ativação
 net.layers{1}.transferFcn = 'tansig';
-net.layers{2}.transferFcn = 'tansig';
-net.layers{3}.transferFcn = 'purelin';
+net.layers{2}.transferFcn = 'purelin';
+%net.layers{3}.transferFcn = 'purelin';
 
 % Funções de Ativacao:
 %   tansig
@@ -101,9 +116,9 @@ net.trainFcn = 'trainlm';
 
 % Divisao de Treino
 net.divideFcn = 'dividerand';
-net.divideParam.trainRatio = 0.7;
-net.divideParam.valRatio = 0.15;
-net.divideParam.testRatio = 0.15;
+net.divideParam.trainRatio = 0.4;
+net.divideParam.valRatio = 0.3;
+net.divideParam.testRatio = 0.3;
 
 %% Realizar 10 iteracoes de treino e calcular media
 sumGlobal = 0;
@@ -183,7 +198,7 @@ end
 
 %% Guardar a rede
 net = netAux;
-str = strcat("../networks/", 'net_b');
+str = strcat("../networks/", sprintf('net_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumGlobal/10),round(sumTest/10)));
 save(str, 'net');
 
 %% Apresentar a Media

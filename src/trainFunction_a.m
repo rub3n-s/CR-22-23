@@ -5,6 +5,12 @@ function trainFunction_a()
 % Minimo 25x25
 IMG_RES = [25 25];
 
+% Pasta do Dataset
+DATASET_FOLDER = 'start';
+
+% Caminho base do Dataset
+BASE_PATH = sprintf('../NN_datasets/%s/',DATASET_FOLDER);
+
 % Numero de ficheiros de imagem por pasta
 NUM_FILES = 5;
 
@@ -22,15 +28,15 @@ for i=1:NUM_FOLDERS
     % Definir o caminho para a pasta
     switch(i-1)
         case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            FOLDER_PATH = sprintf('../NN_datasets/start/%d/',i-1);
+            FOLDER_PATH = strcat(BASE_PATH,sprintf('%d/',i-1));
         case 10 % add
-            FOLDER_PATH = '../NN_datasets/start/add/';
+            FOLDER_PATH = strcat(BASE_PATH,'add/');
         case 11 % div
-            FOLDER_PATH = '../NN_datasets/start/div/';
+            FOLDER_PATH = strcat(BASE_PATH,'div/');
         case 12 % mul
-            FOLDER_PATH = '../NN_datasets/start/mul/';
+            FOLDER_PATH = strcat(BASE_PATH,'mul/');
         case 13 % sub
-            FOLDER_PATH = '../NN_datasets/start/sub/';
+            FOLDER_PATH = strcat(BASE_PATH,'sub/');
     end
 
     % Mostrar as pastas acessadas
@@ -97,7 +103,7 @@ for k=1:10
     
     accuracy = r/size(out,2) * 100;
     somaTreinos = somaTreinos + accuracy;
-    fprintf('Precisao do Treino = %.2f\n', k, accuracy)
+    fprintf('Precisao do Treino = %.2f\n', accuracy)
 
     %plotconfusion(numTarget,out) % Matriz de confusao
 
