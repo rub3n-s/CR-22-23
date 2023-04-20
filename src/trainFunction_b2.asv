@@ -94,9 +94,9 @@ netDigits.trainFcn = 'trainlm';
 
 % Divisao de Treino
 netDigits.divideFcn = 'dividerand';
-netDigits.divideParam.trainRatio = 0.4;
-netDigits.divideParam.valRatio = 0.3;
-netDigits.divideParam.testRatio = 0.3;
+netDigits.divideParam.trainRatio = 0.70;
+netDigits.divideParam.valRatio = 0.15;
+netDigits.divideParam.testRatio = 0.15;
 
 % ======== Treinar, Simular e Apresentar Resultados ========
 % Realizar 10 iteracoes de treino e calcular media
@@ -156,7 +156,7 @@ for k=1:10
     if (k == 1 || globalAccuracy > netDigitsGlobal && testAccuracy > netDigitsTest)
         netDigitsGlobal = globalAccuracy;
         netDigitsTest = testAccuracy;
-        netDigitsAux = netDigits; 
+        netDigitsAux = net; 
     end    
 
     %plotconfusion(target,out) % Matriz de confusao
@@ -227,9 +227,9 @@ netOperators.trainFcn = 'trainlm';
 
 % Divisao de Treino
 netOperators.divideFcn = 'dividerand';
-netOperators.divideParam.trainRatio = 0.4;
-netOperators.divideParam.valRatio = 0.3;
-netOperators.divideParam.testRatio = 0.3;
+netOperators.divideParam.trainRatio = 0.70;
+netOperators.divideParam.valRatio = 0.15;
+netOperators.divideParam.testRatio = 0.15;
 
 % ======== Treinar, Simular e Apresentar Resultados ========
 % Realizar 10 iteracoes de treino e calcular media
@@ -289,7 +289,7 @@ for k=1:10
     if (k == 1 || globalAccuracy > netOperatorsGlobal && testAccuracy > netOperatorsTest)
         netOperatorsGlobal = globalAccuracy;
         netOperatorsTest = testAccuracy;
-        netOperatorsAux = netOperators; 
+        netOperatorsAux = net; 
     end    
 
     %plotconfusion(target,out) % Matriz de confusao
@@ -297,8 +297,8 @@ end
 
 %% [Digitos] Apresentar a Media
 fprintf('\n ------ [Digitos] Apos 10 iteracoes ------\n');
-fprintf('\tMedia de Precisao Global = %.2f\n', sumDigitsGlobal/10);
 fprintf('\tMedia de Precisao Teste = %.2f\n', sumDigitsTest/10);
+fprintf('\tMedia de Precisao Global = %.2f\n', sumDigitsGlobal/10);
 
 % Guardar a rede
 net = netDigitsAux;
@@ -307,12 +307,15 @@ save(str, 'net');
 
 %% [Operadores] Apresentar a Media
 fprintf('\n ------ [Operadores] Apos 10 iteracoes ------\n');
-fprintf('\tMedia de Precisao Global = %.2f\n', sumOperatorsGlobal/10);
 fprintf('\tMedia de Precisao Teste = %.2f\n', sumOperatorsTest/10);
+fprintf('\tMedia de Precisao Global = %.2f\n', sumOperatorsGlobal/10);
 
 % Guardar a rede
-net = netOperatorsAux;
-str = strcat("../networks/", sprintf('netOperators_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumOperatorsGlobal/10),round(sumOperatorsTest/10)));
+net = netDigitsAux;
+str = strcat("../networks/", sprintf('netDigits_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumDigitsGlobal/10),round(sumDigitsTest/10)));
 save(str, 'net');
+
+str = strcat("../networks/", 'netOperators_b2'); % substituir 'netOperators' por uma variavel generica
+save(str, 'netOperatorsAux');
 
 end

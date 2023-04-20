@@ -208,7 +208,7 @@ end
 
 %% Guardar a rede
 net = netAux;
-str = strcat("../networks/", sprintf('net_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumGlobal/10),round(sumTest/10)));
+str = strcat("../networks/", sprintf('%s_pmg%d_pmt%d',nomeRede,round(sumGlobal/10),round(sumTest/10)));
 save(str, 'net');
 
 %% Apresentar a Media

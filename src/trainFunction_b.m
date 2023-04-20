@@ -7,8 +7,8 @@ IMG_RES = [25 25];
 
 % Pasta do Dataset
 %DATASET_FOLDER = 'start';
-%DATASET_FOLDER = 'train';
-DATASET_FOLDER = 'custom_draw';
+DATASET_FOLDER = 'train';
+%DATASET_FOLDER = 'custom_draw';
 
 % Caminho base do Dataset
 BASE_PATH = sprintf('../NN_datasets/%s/',DATASET_FOLDER);
@@ -149,7 +149,7 @@ for k=1:10
     
     globalAccuracy = r/size(out,2)*100;
     sumGlobal= sumGlobal + globalAccuracy;
-    fprintf('\tPrecisao Global = %.2f\n', globalAccuracy)
+    fprintf('\tPrecisao Global = %.2f\n', globalAccuracy);
 
     %plotconfusion(target,out) % Matriz de confusao
 
@@ -194,6 +194,8 @@ for k=1:10
         netTest = testAccuracy;
         netAux = net; 
     end
+
+    %plotconfusion(target,out) % Matriz de confusao
 end
 
 %% Guardar a rede

@@ -5,8 +5,21 @@ function trainFunction_c()
 % Minimo 25x25
 IMG_RES = [25 25];
 
+% Pasta do Dataset
+DATASET_FOLDER = 'custom_draw';
+
+% Caminho base do Dataset
+BASE_PATH = sprintf('../NN_datasets/%s/',DATASET_FOLDER);
+
 % Numero de ficheiros de imagem por pasta
-NUM_FILES = 3;
+switch(DATASET_FOLDER)
+    case 'start'
+        NUM_FILES = 5;
+    case 'train'
+        NUM_FILES = 50;
+    case 'custom_draw'
+        NUM_FILES = 3;
+end
 
 % Numero de pastas
 NUM_FOLDERS = 14;
@@ -19,17 +32,17 @@ count = 1;
 %% Ler, redimensionar e preparar os targets
 for i=1:NUM_FOLDERS
     % Definir o caminho para a pasta
-    switch(i)
+    switch(i-1)
         case {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-            FOLDER_PATH = sprintf('../NN_datasets/custom/%d/',i);
+            FOLDER_PATH = strcat(BASE_PATH,sprintf('%d/',i-1));
         case 10 % add
-            FOLDER_PATH = '../NN_datasets/custom/add/';
+            FOLDER_PATH = strcat(BASE_PATH,'add/');
         case 11 % div
-            FOLDER_PATH = '../NN_datasets/custom/div/';
+            FOLDER_PATH = strcat(BASE_PATH,'div/');
         case 12 % mul
-            FOLDER_PATH = '../NN_datasets/custom/mul/';
+            FOLDER_PATH = strcat(BASE_PATH,'mul/');
         case 13 % sub
-            FOLDER_PATH = '../NN_datasets/custom/sub/';
+            FOLDER_PATH = strcat(BASE_PATH,'sub/');
     end
 
     % Percorrer os 3 ficheiros dentro da pasta i
@@ -96,6 +109,7 @@ netGlobal = 0;
 netTest = 0;
 
 for k=1:10
+    fprintf('\n---------- Iteracao [%d] ----------\n',k);    
     %% Treinar, Simular e Apresentar Resultados
     % Treinar 
     [net,tr] = train(net, in, target);    
@@ -114,7 +128,7 @@ for k=1:10
     
     globalAccuracy = r/size(out,2)*100;
     sumGlobal= sumGlobal + globalAccuracy;
-    fprintf('\nPrecisao Global = %.2f\n', k, globalAccuracy)
+    fprintf('\tPrecisao Global = %.2f\n', globalAccuracy);
 
     % SIMULAR A REDE APENAS NO CONJUNTO DE TESTE
     TInput = in(:, tr.testInd);
@@ -137,7 +151,7 @@ for k=1:10
 
     testAccuracy = r/size(tr.testInd,2)*100;
     sumTest= sumTest + testAccuracy;
-    fprintf('Precisao Teste = %.2f\n', k, testAccuracy);    
+    fprintf('\tPrecisao Teste = %.2f\n', testAccuracy);    
 
     %% Guardar Valores da Net
     % Guardar a primeira iteracao ou a net que tiver melhores valores de
@@ -152,12 +166,15 @@ for k=1:10
 end
 
 %% Guardar a rede
-str = strcat("../networks/", 'net_c'); % substituir 'net' por uma variavel generica
-save(str, 'netAux');
+net = netAux;
+str = strcat("../networks/", sprintf('net_%s_pmg%d_pmt%d',DATASET_FOLDER,round(sumGlobal/10),round(sumTest/10)));
+save(str, 'net');
 
 %% Apresentar a Media
-fprintf('\nApos 10 Iterações:\n')
+fprintf('\n---------- Apos 10 Iterações ----------\n')
 fprintf('\tMedia Precisao Total = %.2f\n', sumGlobal/10);
 fprintf('\tMedia Precisao Teste = %.2f\n', sumTest/10);
+fprintf('\tMedia Performance Treino = %.2f\n', sumPerformanceTrain/10);
+fprintf('\tMedia Performance Teste = %.2f\n', sumPerformanceTest/10);
 
 end
