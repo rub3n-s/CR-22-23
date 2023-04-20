@@ -9,14 +9,7 @@ IMG_RES = [25 25];
 DATASET_FOLDER = 'custom_draw';
 
 % Numero de ficheiros de imagem por pasta
-switch(DATASET_FOLDER)
-    case 'start'
-        NUM_FILES = 5;
-    case 'train'
-        NUM_FILES = 50;
-    case 'custom_draw'
-        NUM_FILES = 3;
-end
+NUM_FILES = 3;
 
 % Numero de pastas
 NUM_FOLDERS = 14;
