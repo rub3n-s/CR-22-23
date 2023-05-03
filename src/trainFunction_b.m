@@ -114,8 +114,8 @@ net.layers{2}.transferFcn = 'purelin';
 net.trainParam.epochs = 100;
 
 % Funcao de Treino
-net.trainFcn = 'trainlm';
-%net.trainFcn = 'trainbfg';
+%net.trainFcn = 'trainlm';
+net.trainFcn = 'trainbfg';
 %net.trainFcn = 'traingd';
 %net.trainFcn = 'trainscg';
 %net.trainFcn = 'trainoss';
@@ -123,8 +123,8 @@ net.trainFcn = 'trainlm';
 % Divisao de Treino
 net.divideFcn = 'dividerand';
 net.divideParam.trainRatio = 0.7;
-net.divideParam.valRatio = 0.15;
-net.divideParam.testRatio = 0.15;
+net.divideParam.valRatio = 0;
+net.divideParam.testRatio = 0.3;
 
 %% Realizar 10 iteracoes de treino e calcular media
 sumGlobal = 0;
