@@ -7,14 +7,14 @@ IMG_RES = [25 25];
 
 % Pasta do Dataset
 %DATASET_FOLDER = 'start';
-DATASET_FOLDER = 'train';
+DATASET_FOLDER = 'train1';
 %DATASET_FOLDER = 'custom_draw';
 
 % Numero de ficheiros de imagem por pasta
 switch(DATASET_FOLDER)
     case 'start'
         NUM_FILES = 5;
-    case 'train'
+    case 'train1'
         NUM_FILES = 50;
     case 'custom_draw'
         NUM_FILES = 3;
@@ -115,16 +115,16 @@ net.trainParam.epochs = 100;
 
 % Funcao de Treino
 %net.trainFcn = 'trainlm';
-net.trainFcn = 'trainbfg';
+%net.trainFcn = 'trainbfg';
 %net.trainFcn = 'traingd';
 %net.trainFcn = 'trainscg';
-%net.trainFcn = 'trainoss';
+net.trainFcn = 'trainoss';
 
 % Divisao de Treino
 net.divideFcn = 'dividerand';
 net.divideParam.trainRatio = 0.7;
-net.divideParam.valRatio = 0;
-net.divideParam.testRatio = 0.3;
+net.divideParam.valRatio = 0.15;
+net.divideParam.testRatio = 0.15;
 
 %% Realizar 10 iteracoes de treino e calcular media
 sumGlobal = 0;
