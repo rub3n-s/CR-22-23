@@ -1,4 +1,4 @@
-function output = trainFunction_d(imgPath,netPath) 
+function output = trainFunction_digits(imgPath,netPath) 
 
 disp(['A iniciar leitura do ficheiro ', imgPath]);
 
