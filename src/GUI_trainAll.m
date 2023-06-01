@@ -1,4 +1,4 @@
-function output = trainFunction_d(imgPath,netPath) 
+function output = GUI_trainAll(imgPath,netPath) 
 
 disp(['A iniciar leitura do ficheiro ', imgPath]);
 
