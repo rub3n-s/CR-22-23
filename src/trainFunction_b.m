@@ -7,6 +7,7 @@ IMG_RES = [25 25];
 
 % Pasta do Dataset
 %DATASET_FOLDER = 'start';
+%DATASET_FOLDER = 'train';
 DATASET_FOLDER = 'train1';
 %DATASET_FOLDER = 'custom_draw';
 
@@ -14,6 +15,8 @@ DATASET_FOLDER = 'train1';
 switch(DATASET_FOLDER)
     case 'start'
         NUM_FILES = 5;
+    case 'train'
+        NUM_FILES = 50;
     case 'train1'
         NUM_FILES = 50;
     case 'custom_draw'
@@ -93,13 +96,13 @@ in = binaryMatrix;
 
 %% Treinar rede
 % Testar com x neuronios e y camadas escondidas
-net = feedforwardnet([10]);
+net = feedforwardnet([10 10 10]);
 
 %% Configurar a Rede
 % Função de Ativação
 net.layers{1}.transferFcn = 'tansig';
-net.layers{2}.transferFcn = 'purelin';
-%net.layers{3}.transferFcn = 'purelin';
+net.layers{2}.transferFcn = 'tansig';
+net.layers{3}.transferFcn = 'purelin';
 
 % Funções de Ativacao:
 %   tansig
@@ -114,11 +117,11 @@ net.layers{2}.transferFcn = 'purelin';
 net.trainParam.epochs = 100;
 
 % Funcao de Treino
-%net.trainFcn = 'trainlm';
+net.trainFcn = 'trainlm';
 %net.trainFcn = 'trainbfg';
 %net.trainFcn = 'traingd';
 %net.trainFcn = 'trainscg';
-net.trainFcn = 'trainoss';
+%net.trainFcn = 'trainoss';
 
 % Divisao de Treino
 net.divideFcn = 'dividerand';
