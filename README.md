@@ -2,4 +2,6 @@
 ## 2022/2023
 Neural Network Practical Work
 
-Numbers recognition
+Numbers & Operators recognition
+Drawing numbers
+Calculations with recognized numbers and operators
